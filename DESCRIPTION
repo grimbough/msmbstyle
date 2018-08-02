@@ -1,0 +1,18 @@
+Package: msmbstyle
+Type: Package
+Title: MSMB Styles for R Markdown Documents
+Version: 0.0.1
+Authors@R: c(
+    person("Mike", "Smith", role = c("aut", "cre"), email = "grimbough@gmail.com")
+    )
+Description: Provides R Markdown output formats to use with Modern Statistics 
+    for Modern Biology.
+License: GPL-3
+LazyData: TRUE
+Imports:
+    htmltools,
+    xfun,
+    knitr (>= 1.18),
+    rmarkdown
+RoxygenNote: 6.1.0
+Encoding: UTF-8
