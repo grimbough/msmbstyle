@@ -2,7 +2,9 @@
 #' @importFrom bookdown html_chapters
 #' @export
 msmb_html_book = function(...) {
-    html_chapters(..., base_format = msmbstyle::msmb_html, page_builder = msmb_build_chapter)
+    html_chapters(..., 
+                  base_format = msmbstyle::msmb_html, 
+                  page_builder = msmb_build_chapter)
 }
 
 #' @details \code{msmb_html()} provides the HTML format based on the Tufte CSS:
@@ -113,7 +115,7 @@ msmb_html = function(
       z
     })
     
-    x = toc_2_navbar(x, file_name = output)
+    x = toc_2_navbar(x, md_file = input)
 
     xfun::write_utf8(x, output)
     output
@@ -276,27 +278,27 @@ create_section_links <- function(html_lines, include_nums = TRUE) {
 
 #' @importFrom stringr str_replace_all str_replace str_c
 #' @importFrom magrittr %>%
-toc_2_navbar <- function(x, file_name) {
+toc_2_navbar <- function(x, md_file) {
     
+    yaml <- xfun::read_utf8(md_file) %>%
+            bookdown:::fetch_yaml() %>%
+            rmarkdown:::parse_yaml_front_matter()
+    
+    header <- paste0(yaml$title, '</br>', paste(yaml$author, collapse = ', '))
+
     toc_start <- min(which(str_detect(x, '<ul>')))
     toc_end <- min(which(str_detect(x, '</ul>')))
-    x[toc_start] <- '<ul class="navbar">
-        <li class="msmb">Modern Statistics for Modern Biology<br/>Susan Holmes and Wolfgang Huber</li>
-        <li class="dropdown" style="float:right">
-        <a href="javascript:void(0)" class="dropbtn">▼ Chapters</a>
-        <div class="dropdown-content">'
+    x[toc_start] <- paste0('<ul class="navbar">\n',
+        '<li class="msmb">', header, '</li>\n',
+        '<li class="dropdown" style="float:right">\n',
+        '<a href="javascript:void(0)" class="dropbtn">▼ Chapters</a>\n',
+        '<div class="dropdown-content">')
     x[toc_start:toc_end] <- x[toc_start:toc_end] %>%
         str_replace_all('<li>', '') %>% 
         str_replace_all('</li>', '') #%>%
         #str_replace_all("#[[:alpha:]]+:?-?[[:alpha:]]+", "")
     x[toc_end] <- '</div>\n</li>'
-    
-    ## find the TOC entry for the current page & add section sublist
-    # toc_this_page <- min(which(str_detect(x, basename(file_name))))
-    # x[ toc_this_page ] <- x[ toc_this_page ] %>%
-    #     str_replace('\\.html"', '.html" id="active-page"') %>%
-    #     str_c(create_section_links(x, include_nums = FALSE))
-    
+
     ## close the navbar list
     x[toc_end] <- str_c(x[toc_end], '\n</ul>')
     
