@@ -280,11 +280,18 @@ create_section_links <- function(html_lines, include_nums = TRUE) {
 #' @importFrom magrittr %>%
 toc_2_navbar <- function(x, md_file) {
     
+    #remove the bookdown inclusion of header etc
+    head_idx <- which(str_detect(x, pattern = "bookdown:title:(start|end)"))
+    if(length(head_idx) == 2) 
+        x <- x[-((head_idx[1]+1):(head_idx[2]-1))]
+    
     yaml <- xfun::read_utf8(md_file) %>%
             bookdown:::fetch_yaml() %>%
             rmarkdown:::parse_yaml_front_matter()
     
-    header <- paste0(yaml$title, '</br>', paste(yaml$author, collapse = ', '))
+    header <- paste0('<p class="title">', yaml$title,
+                     '<p><p class="author">', 
+                     paste(yaml$author, collapse = ', '), '</p>')
 
     toc_start <- min(which(str_detect(x, '<ul>')))
     toc_end <- min(which(str_detect(x, '</ul>')))

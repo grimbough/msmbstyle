@@ -9,6 +9,9 @@ Description: Provides R Markdown output formats to use with Modern Statistics
     for Modern Biology.
 License: GPL-3
 LazyData: TRUE
+Depends:
+    tufte,
+    bookdown
 Imports:
     htmltools,
     xfun,

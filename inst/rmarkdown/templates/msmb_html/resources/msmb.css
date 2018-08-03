@@ -1,3 +1,12 @@
+.title {
+    font-size: 2.5rem;
+}
+
+.author {
+    font-size: 1.5rem;
+    padding-top: 10px;
+}
+
 .proposition, .question-end, .exercise {
   font-size: 1.4rem;
   font-weight: bold;
@@ -84,9 +93,12 @@ li .dropbtn {
     display: inline-block;
     color: white;
     text-align: center;
-    padding: 28px 16px;
     text-decoration: none;
     text-shadow: none;
+    line-height: 2.0rem;
+    margin-right: 16px;
+    padding-top: 55px;
+    padding-bottom: 15px;
 }
 
 li .dropdown:hover .dropbtn {
@@ -112,11 +124,14 @@ li.dropdown {
     width: 27.5%;
     z-index: 1;
     margin-right: 140px;
-    right: calc((87.5% - 1400px)/2);
+    /*modify margin as window resized */
+    right: calc((87.5% - 1400px)/2); 
     max-width: 440px;
     font-size: 1.2rem;
 }
 
+/* keeps the dropdown menu aligned with header
+when window exceeds 1615px */
 @media screen and (max-width: 1615px) {
   .dropdown-content {
     margin-right: 0;
@@ -134,7 +149,6 @@ li.dropdown {
 }
 
 .dropdown-content a:hover {
-    /*background-color: #f1f1f1*/
     background-color: rgb(24,129,194,0.4);
 }
 
@@ -184,11 +198,6 @@ li.toc a {
   font-family: monospace;
 }
 
-/*
-tfoot {
-    display: block;
-}
-*/
 .kable_wrapper {
   border: 0;
   table-layout: fixed;
