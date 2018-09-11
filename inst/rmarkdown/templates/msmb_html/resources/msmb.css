@@ -1,3 +1,10 @@
+@import 'https://fonts.googleapis.com/css?family=Istok+Web|Oxygen|Source+Sans+Pro';
+body {
+  font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+  background-color: #fefefe;
+  margin-top: 0;
+}
+
 .title {
     font-size: 2.5rem;
 }
@@ -5,6 +12,11 @@
 .author {
     font-size: 1.5rem;
     padding-top: 10px;
+}
+
+.dedication {
+    font-style: italic;
+    text-align: center;
 }
 
 .proposition, .question-end, .exercise {
@@ -165,10 +177,6 @@ when window exceeds 1615px */
 #active-page {
     background-color: #1881c2;
     color: white;
-}
-
-body {
-    margin-top: 0;
 }
 
 .toc-sections {

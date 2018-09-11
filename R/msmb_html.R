@@ -52,7 +52,7 @@ msmb_html = function(
 
     x = xfun::read_utf8(output)
     fn_label = paste0(knitr::opts_knit$get('rmarkdown.pandoc.id_prefix'), 'fn')
-    footnotes = parse_footnotes(x, fn_label)
+    footnotes = tufte:::parse_footnotes(x, fn_label)
     notes = footnotes$items
     # replace footnotes with sidenotes
     for (i in seq_along(notes)) {
@@ -71,7 +71,7 @@ msmb_html = function(
     if (length(footnotes$range)) x = x[-footnotes$range]
 
     # replace citations with margin notes
-    if (margin_references) x = margin_references(x)
+    if (margin_references) x = tufte:::margin_references(x)
 
     # place figure captions in margin notes
     x[x == '<p class="caption">'] = '<p class="caption marginnote shownote">'
@@ -155,7 +155,7 @@ msmb_html = function(
   knitr::knit_engines$set(marginfigure = function(options) {
     options$type = 'marginnote'
     if (is.null(options$html.tag)) options$html.tag = 'span'
-    options$html.before = marginnote_html()
+    options$html.before = tufte:::marginnote_html()
     eng_block = knitr::knit_engines$get('block')
     eng_block(options)
   })
@@ -182,62 +182,6 @@ msmb_html_dependency = function() {
         'msmb-css', version = '0',
         src = template_resources('msmb_html', package = 'msmbstyle'), stylesheet = 'msmb.css'
     ))
-}
-
-# we assume one footnote only contains one paragraph here, although it is
-# possible to write multiple paragraphs in a footnote with Pandoc's Markdown
-parse_footnotes = function(x, fn_label = 'fn') {
-  i = which(x == '<div class="footnotes">')
-  if (length(i) == 0) return(list(items = character(), range = integer()))
-  j = which(x == '</div>')
-  j = min(j[j > i])
-  n = length(x)
-  r = sprintf(
-    '<li id="%s([0-9]+)"><p>(.+)<a href="#%sref\\1"([^>]*)>.</a></p></li>',
-    fn_label, fn_label
-  )
-  s = paste(x[i:j], collapse = '\n')
-  list(
-    items = gsub(r, '\\2', unlist(regmatches(s, gregexpr(r, s)))),
-    range = i:j
-  )
-}
-
-# move reference items from the bottom to the margin (as margin notes)
-margin_references = function(x) {
-  i = which(x == '<div id="refs" class="references">')
-  if (length(i) != 1) return(x)
-  # link-citations: no
-  if (length(grep('<a href="#ref-[^"]+">([^<]+)</a>', x)) == 0) return(x)
-  r = '^<div id="(ref-[^"]+)">$'
-  k = grep(r, x)
-  k = k[k > i]
-  n = length(k)
-  if (n == 0) return(x)
-  # pandoc-citeproc may generate a link on both the year and the alphabetic
-  # suffix, e.g. <a href="#cite-key">2016</a><a href="#cite-key">a</a>; we need
-  # to merge the two links
-  x = gsub('(<a href="#[^"]+">)([^<]+)</a>\\1([^<]+)</a>', '\\1\\2\\3</a>', x)
-  ids = gsub(r, '\\1', x[k])
-  ids = sprintf('<a href="#%s">([^<]+)</a>', ids)
-  ref = gsub('^<p>|</p>$', '', x[k + 1])
-  # replace 3 em-dashes with author names
-  dashes = paste0('^', intToUtf8(rep(8212, 3)), '[.]')
-  for (j in grep(dashes, ref)) {
-    ref[j] = sub(dashes, sub('^([^.]+[.])( .+)$', '\\1', ref[j - 1]), ref[j])
-  }
-  ref = marginnote_html(paste0('\\1<span class="marginnote">', ref, '</span>'))
-  for (j in seq_len(n)) {
-    x = gsub(ids[j], ref[j], x)
-  }
-  x[-(i:(max(k) + 3))]  # remove references at the bottom
-}
-
-marginnote_html = function(text = '', icon = '&#8853;') {
-  sprintf(paste0(
-    '<label for="tufte-mn-" class="margin-toggle">%s</label>',
-    '<input type="checkbox" id="tufte-mn-" class="margin-toggle">%s'
-  ), icon, text)
 }
 
 #' @importFrom stringr str_detect str_match
@@ -303,7 +247,7 @@ toc_2_navbar <- function(x, md_file) {
     x[toc_start:toc_end] <- x[toc_start:toc_end] %>%
         str_replace_all('<li>', '') %>% 
         str_replace_all('</li>', '') #%>%
-        #str_replace_all("#[[:alpha:]]+:?-?[[:alpha:]]+", "")
+        #str_replace_all('href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 'href="\\1')
     x[toc_end] <- '</div>\n</li>'
 
     ## close the navbar list
@@ -317,6 +261,10 @@ msmb_build_chapter = function(
 ) {
     # add a has-sub class to the <li> items that has sub lists
     toc = gsub('^(<li>)(.+<ul>)$', '<li class="has-sub">\\2', toc)
+    
+    toc = str_replace_all(toc, 
+                          pattern = 'href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 
+                          replacement = 'href="\\1')
     
     # manipulate the TOC for this page to include sections
     this_page = min(which(str_detect(toc, html_cur)))
