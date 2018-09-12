@@ -242,7 +242,7 @@ toc_2_navbar <- function(x, md_file) {
     x[toc_start] <- paste0('<ul class="navbar">\n',
         '<li class="msmb">', header, '</li>\n',
         '<li class="dropdown" style="float:right">\n',
-        '<a href="javascript:void(0)" class="dropbtn">▼ Chapters</a>\n',
+        '<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>\n',
         '<div class="dropdown-content">')
     x[toc_start:toc_end] <- x[toc_start:toc_end] %>%
         str_replace_all('<li>', '') %>% 
@@ -272,6 +272,8 @@ msmb_build_chapter = function(
              str_replace('href', 'id="active-page" href') %>%
              str_c(create_section_links(chapter, include_nums = FALSE))
     
+    chapter <- .number_questions(chapter)
+    
     paste(c(
         head,
         '<div class="row">',
@@ -291,4 +293,33 @@ msmb_build_chapter = function(
         '</div>',
         foot
     ), collapse = '\n')
+}
+
+#' @importFrom stringr str_match_all str_which
+#' @importFrom magrittr extract
+.number_questions <- function(chapter) {
+    
+    chap_num <- stringr::str_match_all(chapter, pattern = "class=\"header-section-number\">([0-9]+)") %>% 
+        unlist() %>%
+        magrittr::extract(2)
+    
+    question_divs <- stringr::str_which(chapter, "id=\"ques:")
+    if(!length(question_divs)) { return(chapter) }
+    ## for now assume there are always two lines between these
+    question_heads <- question_divs + 2
+    
+    chapter[question_heads] <- mapply(FUN = function(x, y, chapter, chap_num) { 
+        paste0(chapter[x], " ", chap_num, ".", y) }, 
+        question_heads, seq_along(question_heads),
+        MoreArgs = list(chapter = chapter, chap_num = chap_num))
+    
+    question_labs <- str_match(chapter[question_divs], "id=\"(ques:[[:alnum:]-]+)\"")[,2]
+    for(i in seq_along(question_labs)) {
+        ref_lines <- stringr::str_which(chapter, paste0("<a href=\"#", question_labs[i], "\">"))
+        chapter[ref_lines] <- str_replace(chapter[ref_lines], 
+                                          "\\?\\?",
+                                          paste0(chap_num, "\\.", i))
+    }
+    
+    return(chapter)
 }

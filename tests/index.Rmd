@@ -1,0 +1,35 @@
+---
+title: "MSMB HTML Book Style"
+subtitle: "Example"
+author: "Mike Smith"
+date: "`r Sys.Date()`"
+knit: "bookdown::preview_chapter"
+site: "bookdown::bookdown_site"
+link-citations: yes
+monofont: "Source Code Pro"
+monofontoptions: "Scale=0.7"
+output:
+  msmbstyle::msmb_html_book:
+    highlight: tango
+    toc: TRUE
+    toc_depth: 1
+    split_by: chapter
+    split_bib: no
+    margin_references: FALSE
+bibliography: msmbstyle-ex.bib
+---
+
+# Introduction
+
+```{r setup, include=FALSE}
+library(msmbstyle)
+# invalidate cache when the package version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('msmbstyle'))
+options(htmltools.dir.version = FALSE)
+```
+Styling package principally designed for the HTML version of @MSMB.  It is based heavily on the [**tufte** package](https://github.com/rstudio/tufte) [@R-tufte]. 
+
+## Basic usage
+
+For HTML output, use `msmbstyle::msmb_html_book` in the yaml header.
+

@@ -10,12 +10,14 @@ Description: Provides R Markdown output formats to use with Modern Statistics
 License: GPL-3
 LazyData: TRUE
 Depends:
-    tufte,
     bookdown
 Imports:
+    tufte,
     htmltools,
     xfun,
     knitr (>= 1.18),
-    rmarkdown
+    rmarkdown,
+    stringr,
+    magrittr
 RoxygenNote: 6.1.0
 Encoding: UTF-8

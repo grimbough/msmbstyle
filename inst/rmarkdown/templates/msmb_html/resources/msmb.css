@@ -1,4 +1,5 @@
 @import 'https://fonts.googleapis.com/css?family=Istok+Web|Oxygen|Source+Sans+Pro';
+@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
 body {
   font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
   background-color: #fefefe;
@@ -19,23 +20,35 @@ body {
     text-align: center;
 }
 
-.proposition, .question-end, .exercise {
+.proposition, .question-begin, .question-end, .exercise {
   font-size: 1.4rem;
   font-weight: bold;
   margin-top: 1.2rem;
   color: green;
 }
 
-.solution, .solution-end {
+.solution, .solution-begin, .solution-end {
   font-size: 1.4rem;
   font-weight: bold;
   color: red;
 }
 
+
+
 .solution-end, .question-end {
-  width: 55%;
-  text-align: right;
-  margin-top: -30px;
+/*  width: 55%; */
+/*  text-align: right; */
+/*  float: right; */
+/*  margin-top: -30px; */
+    height: 1em;
+}
+
+.solution-icon {
+    float: right;
+}
+
+.clickable {
+    cursor: pointer;
 }
 
 .marginnote, .sidenote {
