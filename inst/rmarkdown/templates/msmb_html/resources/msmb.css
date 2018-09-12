@@ -33,7 +33,12 @@ body {
   color: red;
 }
 
-
+/* we can remove this eventually 
+its only here while we sort out the book*/
+.solution-body {
+    font-weight: normal;
+    color: black;
+}
 
 .solution-end, .question-end {
 /*  width: 55%; */
@@ -224,3 +229,13 @@ li.toc a {
   table-layout: fixed;
 }
 
+
+@media (max-width: 760px) {
+    .marginnote, .sidenote {
+        margin-left: 0;
+        display: block;
+    }
+    div.sourceCode {
+        overflow-x: unset;
+    }
+}

@@ -1,0 +1,36 @@
+---
+title: "MSMB HTML Book Style"
+subtitle: "Example"
+author: "Mike Smith"
+date: "`r Sys.Date()`"
+knit: "bookdown::preview_chapter"
+site: "bookdown::bookdown_site"
+link-citations: yes
+monofont: "Source Code Pro"
+monofontoptions: "Scale=0.7"
+output:
+  msmbstyle::msmb_html_book:
+    highlight: tango
+    toc: TRUE
+    toc_depth: 1
+    split_by: chapter
+    margin_references: FALSE
+bibliography: msmbstyle-ex.bib
+---
+
+# Questions and Solutions
+
+
+## Questions
+
+`r msmbstyle::question(text = "Does this look like a question?")`
+
+`r msmbstyle::question(text = "Is this question numbered?", label = "ques:numbered")`
+
+## Solutions
+
+You can insert solutions using the code `` `r '\x60r msmbstyle::solution()\x60'` ``.  This again takes the `text` and `label` arguments.  Additionally there is a `toggle` argument, which if set to true will create the solution in a 'collapsed' format.  Pressing the plus icon will then show the content of the solution.  This gives the option of initially hiding a solution, so the reader is forced into taking an active step to reveal the answer.
+
+`` `r '\x60r msmbstyle::solution(text = "Is this solution rendering correctly?")\x60'` ``
+
+`r msmbstyle::solution(text = "Is this solution rendering correctly?")`
