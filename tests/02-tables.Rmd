@@ -42,9 +42,9 @@ knitr::kable(d1, caption = 'Example of table appearing in the main body of the t
 
 ## Margin tables
 
-You can also include tables in the margin column as in Table \@ref(tab:margin-table), with the caption above
+You can also include tables in the margin column as in Table \@ref(tab:margin-table), with the caption above.
 
-```{r, margin-table, echo = FALSE}
+```{r, margin-table, echo = TRUE}
 HIV <- data.frame(Patient = c('AHX112', 'AHX717', 'AHX543'), 
                            Mut1 = c(0, 1, 1),
                            Mut2 = c(0, 0, 0),
@@ -53,3 +53,5 @@ HIV <- data.frame(Patient = c('AHX112', 'AHX717', 'AHX543'),
 knitr::kable(HIV, format = 'html', table.attr = 'class=\"margintab marginnote\"',
         caption = 'An example of a table in the margin.')
 ```
+
+To achieve this we use the `kable()` function to produce the an HTML table with the attributes `margintab` & `marginnote`.  **msmbstyle** then provides the CSS required to place this table in the margin.

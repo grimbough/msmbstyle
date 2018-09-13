@@ -16,4 +16,4 @@ A (problably incomplete) list of the layout differences between an HTML book pro
     - The current chapter has sections listed too.
 - Sans serif font (current using [Source Sans Pro](https://fonts.google.com/specimen/Source+Sans+Pro))
 - Keeps default width of code blocks when vertically aligned with margin figures.
-
+- Provides CSS support to place tables in the margin along with figures and notes.

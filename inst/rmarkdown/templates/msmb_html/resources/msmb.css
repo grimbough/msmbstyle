@@ -233,9 +233,24 @@ li.toc a {
 @media (max-width: 760px) {
     .marginnote, .sidenote {
         margin-left: 0;
-        display: block;
     }
-    div.sourceCode {
-        overflow-x: unset;
+    .sourceCode {
+        display: inline-block;
+    }
+    .title, .author, .dropdown {
+        text-align: center;
+    }
+    .dropdown {
+        width: 100%;
+    }
+    .dropdown-content {
+        position: inherit;
+        width: 100%;
+    }
+    li .dropbtn {
+        padding-top: 0;
+    }
+    h1, h2 {
+        width: 90%;
     }
 }
