@@ -20,17 +20,32 @@ bibliography: msmbstyle-ex.bib
 
 # Questions and Solutions
 
+In teaching material it is common to want to include questions (and possibly solutions) to the reader.  It is possible to use [custom blocks](https://bookdown.org/yihui/bookdown/custom-blocks.html) to achieve distinct styling, however this doesn't provide internal labelling, referencing and numbering.   **bookdown** doesn't current provide an environment for questions and answers, although one can manipulate the various "[theorems](https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#theorems)" to achieve something similar.
 
 ## Questions
 
+You can include a question using the inline function `r knitr::inline_expr("msmbstyle::question()")`.  This takes two arguments: `text` and `label`.  `text` is a character string and provides the body of the question.  `label` is optional, and if provided can be used to reference the label in the main text of the book. Labels for questions must start with the string '*ques:*'
+
+The following question is produced by `r knitr::inline_expr("msmbstyle::question(text = \"Does this look like a question?\")")`
+
 `r msmbstyle::question(text = "Does this look like a question?")`
+
+We can produce a numbered question like Question \@ref(ques:numbered) using something like `r knitr::inline_expr('msmbstyle::question(text = "Is this question numbered?", label = "ques:numbered")')`
 
 `r msmbstyle::question(text = "Is this question numbered?", label = "ques:numbered")`
 
+### Including `"code"` in a question.
+
+In order to include text formated to look like R code in you can use the sequence '`\x60`' to represent the backticks inside the text argument e.g.
+
+`r msmbstyle::question(text = "Does this question include \x60x\x60 and \x60y\x60?")`
+
 ## Solutions
 
-You can insert solutions using the code `` `r '\x60r msmbstyle::solution()\x60'` ``.  This again takes the `text` and `label` arguments.  Additionally there is a `toggle` argument, which if set to true will create the solution in a 'collapsed' format.  Pressing the plus icon will then show the content of the solution.  This gives the option of initially hiding a solution, so the reader is forced into taking an active step to reveal the answer.
+You can insert solutions using the code `r knitr::inline_expr("msmbstyle::solution()")`.  This again takes the `text` argument.  Additionally there is a `toggle` argument, which if set to `TRUE` will create the solution in a 'collapsed' format.  Pressing the plus icon will then show the content of the solution.  This gives the option of initially hiding a solution, so the reader is forced into taking an active step to reveal the answer.
 
-`` `r '\x60r msmbstyle::solution(text = "Is this solution rendering correctly?")\x60'` ``
+`` `r '\x60r msmbstyle::solution(text = "Is this solution rendering correctly?", toggle = TRUE)\x60'` ``
 
-`r msmbstyle::solution(text = "Is this solution rendering correctly?")`
+`r msmbstyle::solution(text = "Is this solution rendering correctly?", toggle = TRUE)`
+
+Solutions are currently not numbered and can't be referenced.

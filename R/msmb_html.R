@@ -259,6 +259,12 @@ toc_2_navbar <- function(x, md_file) {
 msmb_build_chapter = function(
     head, toc, chapter, link_prev, link_next, rmd_cur, html_cur, foot
 ) {
+    
+    ## insert script for solution toggle
+    ## we put it after the msmb.css as this should always be present
+    last_script <- max(str_which(head, "msmb.css\""))
+    head[last_script] <- paste(head[last_script], toggle_script(), sep = "\n")
+    
     # add a has-sub class to the <li> items that has sub lists
     toc = gsub('^(<li>)(.+<ul>)$', '<li class="has-sub">\\2', toc)
     
@@ -315,7 +321,7 @@ msmb_build_chapter = function(
     
     question_labs <- str_match(chapter[question_divs], "id=\"(ques:[[:alnum:]-]+)\"")[,2]
     for(i in seq_along(question_labs)) {
-        ref_lines <- stringr::str_which(chapter, paste0("<a href=\"#", question_labs[i], "\">"))
+        ref_lines <- stringr::str_which(chapter, paste0("<a href=\".*#", question_labs[i], "\">"))
         chapter[ref_lines] <- str_replace(chapter[ref_lines], 
                                           "\\?\\?",
                                           paste0(chap_num, "\\.", i))

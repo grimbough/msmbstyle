@@ -236,6 +236,7 @@ li.toc a {
     }
     .sourceCode {
         display: inline-block;
+        width: 90%;
     }
     .title, .author, .dropdown {
         text-align: center;
@@ -250,7 +251,10 @@ li.toc a {
     li .dropbtn {
         padding-top: 0;
     }
-    h1, h2 {
+    h1, h2, h3 {
         width: 90%;
+    }
+    h3 {
+        display: inline-block;
     }
 }
