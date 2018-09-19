@@ -42,10 +42,35 @@ In order to include text formated to look like R code in you can use the sequenc
 
 ## Solutions
 
-You can insert solutions using the code `r knitr::inline_expr("msmbstyle::solution()")`.  This again takes the `text` argument.  Additionally there is a `toggle` argument, which if set to `TRUE` will create the solution in a 'collapsed' format.  Pressing the plus icon will then show the content of the solution.  This gives the option of initially hiding a solution, so the reader is forced into taking an active step to reveal the answer.
+You can insert solutions using either the function `r knitr::inline_expr("msmbstyle::solution()")`, or a combination of `r knitr::inline_expr("msmbstyle::solution_begin()")` & `r knitr::inline_expr("msmbstyle::solution_end()")`  
 
-`` `r '\x60r msmbstyle::solution(text = "Is this solution rendering correctly?", toggle = TRUE)\x60'` ``
+### Simple solution - `solution()`
 
-`r msmbstyle::solution(text = "Is this solution rendering correctly?", toggle = TRUE)`
+If your solution is simply a paragraph of text, you can use `msmbstyle::solution()` and provide the paragraph via the argument `text`.  We see an example of this approach below:
 
-Solutions are currently not numbered and can't be referenced.
+```{r, simple-solution} 
+msmbstyle::solution(text = "This is a single paragraph providing the answer to a question.")
+```
+
+Additional arguments to this function are `begin` and `toggle` argument.  The first of these allows you to set the text that begins a solution e.g. if you would rather they were called 'answers'.  The `toggle` argument expects a logical which if set to `TRUE` will create the solution in a 'collapsed' format, which can be seen above.  Pressing the plus icon will then show the content of the solution.  This gives the option of initially hiding a solution, so the reader is forced into taking an active step to reveal the answer.
+
+### More complex solutions - `solution_begin()` / `solution_end`
+
+If you need to provide more detail than a single paragraph in a solution, you can use the functions `solution_begin()` and `solution_end()` to demark the content of the document you wish to be included in the solution.  (*This is similar to using `\begin{}` and `\end{}` tags in a Latex document.*).
+
+It is perhaps simplest to call the functions inline within your R Markdown document e.g. `` `r knitr::inline_expr("msmbstyle::solution_begin()")` ``, and they must be used as a pair, otherwise the resulting document will have missmatched HTML tags.
+
+The example below shows a solution that involves several paragraphs of text, along with a code block and the output created by running this code.  This is all contained within our 'collapsed' solution environment and can be revealed by clicking on the plus symbol.
+
+`r msmbstyle::solution_begin()`
+
+This is a more comprehensive answer.  It involves both this text, some code, and the plot produced by that code.
+
+```{r, longer-solution}
+plot( 1:10 )
+```
+
+The plot above is great!
+
+`r msmbstyle::solution_end()`
+
