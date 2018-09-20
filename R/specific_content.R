@@ -3,7 +3,7 @@
 solution_end <- function() {
     if (knitr::is_html_output()) {
         
-        part2 <- paste0("<p class=\"solution-end\"", "\"style=\"display: none;\">", 
+        part2 <- paste0("<p class=\"solution-end\">", 
                         "<span class=\"fa fa-square-o solution-icon\">", "</p>",
                         "</div>",
                         "</div>") 
@@ -13,16 +13,15 @@ solution_end <- function() {
 }
 
 #' @export 
-solution_begin <- function(begin = "&#x25BA; Solution", toggle = TRUE) {
-    solution(text = "", begin = begin, toggle = toggle)
+solution_begin <- function(begin = "&#x25BA; Solution", toggle = TRUE, hidden = FALSE) {
+    solution(text = "", begin = begin, toggle = toggle, hidden = hidden)
 }
 
 #' @export
-solution <- function(text = "", begin = "&#x25BA; Solution", toggle = TRUE) {
+solution <- function(text = "", begin = "&#x25BA; Solution", toggle = TRUE, hidden = FALSE) {
     
     if (knitr::is_html_output()) {
         
-        #ids <- stringi::stri_rand_strings(n = 2, length = 8)
         id <- generate_id2()
         
         id1 <- paste0("sol-start-", id)
@@ -35,13 +34,24 @@ solution <- function(text = "", begin = "&#x25BA; Solution", toggle = TRUE) {
                       sprintf("<span id='%s' class=\"fa fa-plus-square solution-icon clickable\" onclick=\"toggle_visibility('%s', '%s')\"></span>", id1, id2, id1), 
                       ""),
                "</p>",
-               "<div class=\"solution-body\" id = \"", id2,"\" style=\"display: none;\">"
-        )
+               ifelse(toggle,
+                      paste0("<div class=\"solution-body\" id = \"", id2,"\" style=\"display: none;\">"),
+                      "<div class=\"solution-body\">")
+        ) 
+        
+        if(hidden) {
+            part1 <- stringr::str_replace(string = part1, 
+                                          "\"solution\"",
+                                          "\"solution\" style=\"display: none;\"" )
+        }
+        
+        ## if there's no text then don't close the HTML div
+        ## we expect this to be done later
         if(nchar(text) == 0) {
             part2 <- ""
         } else {
             part2 <- paste0("<p>", text, "</p>",
-                "<p class=\"solution-end\" style=\"display: none;\">", 
+                "<p class=\"solution-end\">", 
                 "<span class=\"fa fa-square-o solution-icon\">", "</p>",
                 "</div></div>")
         }

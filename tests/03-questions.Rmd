@@ -22,55 +22,91 @@ bibliography: msmbstyle-ex.bib
 
 In teaching material it is common to want to include questions (and possibly solutions) to the reader.  It is possible to use [custom blocks](https://bookdown.org/yihui/bookdown/custom-blocks.html) to achieve distinct styling, however this doesn't provide internal labelling, referencing and numbering.   **bookdown** doesn't current provide an environment for questions and answers, although one can manipulate the various "[theorems](https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#theorems)" to achieve something similar.
 
+**msmbstyle** provides a set of functions that can be used to demark questions and answers in the the R Markdown document.  They can be used either inline or in code chunks, and the precise usage may vary depending upon the complexity of the text you wish to include.
+
 ## Questions
 
-You can include a question using the inline function `r knitr::inline_expr("msmbstyle::question()")`.  This takes two arguments: `text` and `label`.  `text` is a character string and provides the body of the question.  `label` is optional, and if provided can be used to reference the label in the main text of the book. Labels for questions must start with the string '*ques:*'
+### Simple question 
 
-The following question is produced by `r knitr::inline_expr("msmbstyle::question(text = \"Does this look like a question?\")")`
+If your question is simply a paragraph of text, you can use `msmbstyle::question()` and provide the paragraph via the argument `text`.  We see an example of this approach below (*the code is shown here, but it would be more typical to hide it via `echo = FALSE`*).
 
-`r msmbstyle::question(text = "Does this look like a question?")`
+```{r, simple-question} 
+msmbstyle::question(text = "Is this question displaying correctly?")
+```
 
-We can produce a numbered question like Question \@ref(ques:numbered) using something like `r knitr::inline_expr('msmbstyle::question(text = "Is this question numbered?", label = "ques:numbered")')`
+You can also include a question using inline code e.g. `` `r knitr::inline_expr("msmbstyle::question()")` ``.  This is perhaps simpler than using code chunks, since it is unlikely we ever want to display the function call itself.  The question below is generated in this fashion.
 
-`r msmbstyle::question(text = "Is this question numbered?", label = "ques:numbered")`
+`r msmbstyle::question(text = "This is our second question.  It should not be numbered.  Is it?")`
 
-### Including `"code"` in a question.
+In addition to the `text` argument, you can also provide a `label` to the function. `label` is optional, and if provided can be used to reference the label in the main text of the book. Labels for questions must start with the string '*ques:*'  In Question \@ref(ques:two) we can see an example of a labelled question that can be referenced (as seen in this sentence). 
+
+`r msmbstyle::question(label = "ques:two", text = "This is our second question.  We expect this to have a number.")`
+
+#### Including `"code"` in a question. {-}
 
 In order to include text formated to look like R code in you can use the sequence '`\x60`' to represent the backticks inside the text argument e.g.
 
 `r msmbstyle::question(text = "Does this question include \x60x\x60 and \x60y\x60?")`
 
-## Solutions
+### More complex questions
 
-You can insert solutions using either the function `r knitr::inline_expr("msmbstyle::solution()")`, or a combination of `r knitr::inline_expr("msmbstyle::solution_begin()")` & `r knitr::inline_expr("msmbstyle::solution_end()")`  
+If you need to provide more detail than a single paragraph in a question, you can use the functions `question_begin()` and `question_end()` to demark the content of the document you wish to be included in the question.  (*This is similar to using `\begin{}` and `\end{}` tags in a Latex document.*).
 
-### Simple solution - `solution()`
+The can again be called either inline or in code chunks (inline seems simpler) within the R Markdown document, and it is imperative they be used as a pair, otherwise the resulting document will have missmatched HTML tags (*currently there's no sanity checking for this, it's up to the author!*).
 
-If your solution is simply a paragraph of text, you can use `msmbstyle::solution()` and provide the paragraph via the argument `text`.  We see an example of this approach below:
+The example below shows a question that involves several paragraphs of text, along with a code block and the output created by running this code. 
 
-```{r, simple-solution} 
-msmbstyle::solution(text = "This is a single paragraph providing the answer to a question.")
-```
+`r msmbstyle::question_begin()`
 
-Additional arguments to this function are `begin` and `toggle` argument.  The first of these allows you to set the text that begins a solution e.g. if you would rather they were called 'answers'.  The `toggle` argument expects a logical which if set to `TRUE` will create the solution in a 'collapsed' format, which can be seen above.  Pressing the plus icon will then show the content of the solution.  This gives the option of initially hiding a solution, so the reader is forced into taking an active step to reveal the answer.
+This is a more complex question.  It involves both this text, some code, and the plot produced by that code.
 
-### More complex solutions - `solution_begin()` / `solution_end`
-
-If you need to provide more detail than a single paragraph in a solution, you can use the functions `solution_begin()` and `solution_end()` to demark the content of the document you wish to be included in the solution.  (*This is similar to using `\begin{}` and `\end{}` tags in a Latex document.*).
-
-It is perhaps simplest to call the functions inline within your R Markdown document e.g. `` `r knitr::inline_expr("msmbstyle::solution_begin()")` ``, and they must be used as a pair, otherwise the resulting document will have missmatched HTML tags.
-
-The example below shows a solution that involves several paragraphs of text, along with a code block and the output created by running this code.  This is all contained within our 'collapsed' solution environment and can be revealed by clicking on the plus symbol.
-
-`r msmbstyle::solution_begin()`
-
-This is a more comprehensive answer.  It involves both this text, some code, and the plot produced by that code.
-
-```{r, longer-solution}
+```{r, longer-question, fig.cap='An informative correlation'}
 plot( 1:10 )
 ```
 
-The plot above is great!
+What do you think about the data shown in Figure \@ref(fig:longer-question)?
+
+`r msmbstyle::question_end()`
+
+## Solutions
+
+In similar fasion to questions, you can insert solutions using either the function `msmbstyle::solution()`, or a combination of `msmbstyle::solution_begin()` & `msmbstyle::solution_end()`.  *Currently solutions can not be labelled or reference in the text.  This is primarily because of an assumption that they would always have an accompanying question that could be referenced, and may change in the future.*
+
+### Simple solution
+
+Again, if your solution is just a single a paragraph of text, you can use `msmbstyle::solution()` and provide the paragraph via the argument `text`.  We see an example of this approach below:
+
+`r msmbstyle::solution(text = "This is a single paragraph providing an answer.")`
+
+Additional arguments to this function are `begin` and `toggle` argument.  The first of these allows you to set the text that begins a solution e.g. if you would rather they were called 'answers'.  The `toggle` argument expects a logical which if set to `TRUE` will create the solution in a 'collapsed' format, which can be seen above.  Pressing the plus icon will then show the content of the solution.  This gives the option of initially hiding a solution, so the reader is forced into taking an active step to reveal the answer.  Below is in 
+
+```{r, simple-solution2} 
+msmbstyle::solution(text = "This an 'Answer' and cannot be hidden",
+                    begin = "Answer",
+                    toggle = FALSE)
+```
+
+### More complex solutions
+
+More comprehensive solutions can similarly be indicated with calls to `solution_begin()` and `solution_end()`.  The first of these takes the same arguments as `solution()` allowing you to set the visibility toggle and section heading text.
+
+`r msmbstyle::solution_begin()`
+
+This is a more complex solution. We'll reuse the plotting code from an earlier example to include a figure in the margin.
+
+```{r fig-margin2, fig.margin = TRUE, fig.cap = "MPG vs horsepower, colored by transmission.", fig.width=3.5, fig.height=3.5, cache=TRUE}
+library(ggplot2)
+mtcars2 <- mtcars
+mtcars2$am <- factor(
+  mtcars$am, labels = c('automatic', 'manual')
+)
+ggplot(mtcars2, aes(hp, mpg, color = am)) +
+  geom_point() + geom_smooth() +
+  theme(legend.position = 'bottom')
+```
 
 `r msmbstyle::solution_end()`
+
+
+Everything including the margin figure is contained within our 'collapsed' solution environment and can be revealed by clicking on the plus symbol.
 

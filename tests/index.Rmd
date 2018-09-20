@@ -33,3 +33,20 @@ Styling package principally designed for the HTML version of @MSMB.  It is based
 
 For HTML output, use `msmbstyle::msmb_html_book` in the yaml header.
 
+```
+title: "MSMB HTML Book Style"
+subtitle: "Example"
+author: "Mike Smith"
+date: "`r Sys.Date()`"
+knit: "bookdown::preview_chapter"
+site: "bookdown::bookdown_site"
+link-citations: yes
+output:
+  msmbstyle::msmb_html_book:
+    toc: TRUE
+    toc_depth: 1
+    split_by: chapter
+bibliography: msmbstyle-ex.bib
+```
+
+Currently it is mandatory to set `toc: TRUE` and `toc_depth: 1`.  Changing the first value will remove the list of chapters entirely, and setting the second to any other value will break the code that creates the drop-down navigatin menu.  This will hopefully be made more configurable/robust in the future.
