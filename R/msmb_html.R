@@ -1,4 +1,4 @@
-#' @rdname html_chapters
+#' @rdname msmb_html
 #' @importFrom bookdown html_chapters
 #' @export
 msmb_html_book = function(...) {
@@ -7,9 +7,21 @@ msmb_html_book = function(...) {
                   page_builder = msmb_build_chapter)
 }
 
-#' @details \code{msmb_html()} provides the HTML format based on the Tufte CSS:
-#'   \url{https://edwardtufte.github.io/tufte-css/}.
-#' @param margin_references Whether to place citations in margin notes.
+#' Modern Statstics for Modern Biology HTML format
+#' 
+#' Template for creating webpages in the style of Modern Statistics for
+#' Modern Biology \url{http://www-huber.embl.de/msmb/}.
+#' 
+#' @details \code{msmb_html()} provides the HTML format used in 
+#' Modern Statistics for Modern Biology:
+#'   \url{http://www-huber.embl.de/msmb/}.
+#' @details \code{msmb_html_book()} is used to create output split
+#' into individual chapters for a book.  If you wish to create a complete
+#' book this should be used in the output section of your YAML header
+#' in the R Markdown document. 
+#' 
+#' @param margin_references \code{logical}.  Determines whether to place 
+#'   citations in the margin, or collate them at the end of the document.
 #' @rdname msmb_html
 #' @export
 msmb_html = function(
@@ -115,7 +127,7 @@ msmb_html = function(
       z
     })
     
-    x = toc_2_navbar(x, md_file = input)
+    x = .toc_2_navbar(x, md_file = input)
 
     xfun::write_utf8(x, output)
     output
@@ -165,6 +177,9 @@ msmb_html = function(
   format
 }
 
+## Slightly modified version of tufte:::tufte_html_dependency
+## Modified to specify the package name the CSS files are found in
+## TODO Can we just use the version in tufte itself?
 #' @importFrom htmltools htmlDependency
 tufte_html_dependency = function(features, variant) {
   list(htmlDependency(
@@ -184,8 +199,11 @@ msmb_html_dependency = function() {
     ))
 }
 
+## Identifies any <h2> headings in the output HTML (equivalent to a section)
+## Builds a table of contents for the current page based on these
+## that will be included in the drop-down navigation
 #' @importFrom stringr str_detect str_match
-create_section_links <- function(html_lines, include_nums = TRUE) {
+.create_section_links <- function(html_lines, include_nums = TRUE) {
     
     section_names <- html_lines[str_detect(html_lines, '<h2>')] %>%
         str_match('>([0-9.]+)</span>(.*)</h2>') 
@@ -220,9 +238,11 @@ create_section_links <- function(html_lines, include_nums = TRUE) {
     
 }
 
+## Converts the table of contents HTML produced by bookdown into
+## the format required for the drop-down menu navigation.
 #' @importFrom stringr str_replace_all str_replace str_c
 #' @importFrom magrittr %>%
-toc_2_navbar <- function(x, md_file) {
+.toc_2_navbar <- function(x, md_file) {
     
     #remove the bookdown inclusion of header etc
     head_idx <- which(str_detect(x, pattern = "bookdown:title:(start|end)"))
@@ -276,7 +296,7 @@ msmb_build_chapter = function(
     this_page = min(which(str_detect(toc, html_cur)))
     toc[ this_page ] <- toc[ this_page ] %>%
              str_replace('href', 'id="active-page" href') %>%
-             str_c(create_section_links(chapter, include_nums = FALSE))
+             str_c(.create_section_links(chapter, include_nums = FALSE))
     
     chapter <- .number_questions(chapter)
     

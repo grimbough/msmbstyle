@@ -42,6 +42,8 @@ In addition to the `text` argument, you can also provide a `label` to the functi
 
 `r msmbstyle::question(label = "ques:two", text = "This is our second question.  We expect this to have a number.")`
 
+*NOTE: Currently using references to a question will result in a warning such as '`The label(s) ques:two not found`'.  This is because **knitr** is unable to resolve the reference (since this is an addon).  This is irritating, but can be ignored, and may be addressed in the future*
+
 #### Including `"code"` in a question. {-}
 
 In order to include text formated to look like R code in you can use the sequence '`\x60`' to represent the backticks inside the text argument e.g.
@@ -52,7 +54,7 @@ In order to include text formated to look like R code in you can use the sequenc
 
 If you need to provide more detail than a single paragraph in a question, you can use the functions `question_begin()` and `question_end()` to demark the content of the document you wish to be included in the question.  (*This is similar to using `\begin{}` and `\end{}` tags in a Latex document.*).
 
-The can again be called either inline or in code chunks (inline seems simpler) within the R Markdown document, and it is imperative they be used as a pair, otherwise the resulting document will have missmatched HTML tags (*currently there's no sanity checking for this, it's up to the author!*).
+They can again be called either inline or in code chunks (inline seems simpler) within the R Markdown document, and it is imperative they be used as a pair, otherwise the resulting document will have missmatched HTML tags (*currently there's no sanity checking for this, it's up to the author!*).
 
 The example below shows a question that involves several paragraphs of text, along with a code block and the output created by running this code. 
 
@@ -78,11 +80,13 @@ Again, if your solution is just a single a paragraph of text, you can use `msmbs
 
 `r msmbstyle::solution(text = "This is a single paragraph providing an answer.")`
 
-Additional arguments to this function are `begin` and `toggle` argument.  The first of these allows you to set the text that begins a solution e.g. if you would rather they were called 'answers'.  The `toggle` argument expects a logical which if set to `TRUE` will create the solution in a 'collapsed' format, which can be seen above.  Pressing the plus icon will then show the content of the solution.  This gives the option of initially hiding a solution, so the reader is forced into taking an active step to reveal the answer.  Below is in 
+There are additional arguments to this function: `header` and `toggle`.  `header` allows you to set the headeing text that begins a solution e.g. if you would rather they were called 'answers'.  `toggle` expects a logical which, if set to `TRUE` (the default), will create the solution in a 'collapsed' format.  Pressing the plus icon will then show the content of the solution.  This gives the option of initially hiding a solution, so the reader is forced into taking an active step to reveal the answer.  
+
+Below is an example where the collapsing behaviour has been turned off and the section header renamed.
 
 ```{r, simple-solution2} 
 msmbstyle::solution(text = "This an 'Answer' and cannot be hidden",
-                    begin = "Answer",
+                    header = "Answer",
                     toggle = FALSE)
 ```
 

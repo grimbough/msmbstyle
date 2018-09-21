@@ -18,7 +18,11 @@ output:
 bibliography: msmbstyle-ex.bib
 ---
 
-# Figures
+# Figures & Margin Content
+
+When using **msmbstyle** you can make use of all the plot configuration settings that are provided by [**bookdown**](https://www.bookdown.org) and [**tufte**](https://github.com/rstudio/tufte), including references, figure captions, and margin figures.
+
+The examples shown below are taken directly from the **tufte** vignette (https://rstudio.github.io/tufte/) to demonstrate how they are styled by **msmbstyle**.
 
 ## Margin Figures
 
@@ -46,7 +50,7 @@ We know from _the first fundamental theorem of calculus_ that for $x$ in $[a, b]
 $$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$
 ```
 
-For the sake of portability between LaTeX and HTML, you should keep the margin content as simple as possible (syntax-wise) in the `marginefigure` blocks. You may use simple Markdown syntax like `**bold**` and `_italic_` text, but please refrain from using footnotes, citations, or block-level elements (e.g. blockquotes and lists) there.
+For the sake of portability between LaTeX and HTML, you should keep the margin content as simple as possible (syntax-wise) in the `marginfigure` blocks. You may use simple Markdown syntax like `**bold**` and `_italic_` text, but please refrain from using footnotes, citations, or block-level elements (e.g. blockquotes and lists) there.
 
 ## Full Width Figures
 

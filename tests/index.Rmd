@@ -1,16 +1,12 @@
 ---
 title: "MSMB HTML Book Style"
-subtitle: "Example"
 author: "Mike Smith"
 date: "`r Sys.Date()`"
 knit: "bookdown::preview_chapter"
 site: "bookdown::bookdown_site"
 link-citations: yes
-monofont: "Source Code Pro"
-monofontoptions: "Scale=0.7"
 output:
   msmbstyle::msmb_html_book:
-    highlight: tango
     toc: TRUE
     toc_depth: 1
     split_by: chapter
@@ -27,26 +23,54 @@ library(msmbstyle)
 knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('msmbstyle'))
 options(htmltools.dir.version = FALSE)
 ```
-Styling package principally designed for the HTML version of @MSMB.  It is based heavily on the [**tufte** package](https://github.com/rstudio/tufte) [@R-tufte]. 
+
+**msmbstyle** is a styling package principally designed for the HTML version of @MSMB, with the explicit intention to closely match the layout an existing publication produced using Sweave and LaTeX.  The existing book layout was strongly influenced by the Tufte Handout style of Edward Tufte, and as such **msmbstyle** is based heavily on the [**tufte** package](https://github.com/rstudio/tufte) [@R-tufte], either calling code from that package directly, or modifying it when required. 
+
+You can view the R Markdown documents used to create this site on [Github](https://github.com/grimbough/msmbstyle/tree/master/tests).
 
 ## Basic usage
 
-For HTML output, use `msmbstyle::msmb_html_book` in the yaml header.
+To produce an HTML page using *"msmbstyle"* you need to set the output to  `msmbstyle::msmb_html_book` in the yaml header of your R Markdown file.  The header used in this example site is shown below:
 
-```
+```yaml
 title: "MSMB HTML Book Style"
-subtitle: "Example"
 author: "Mike Smith"
 date: "`r Sys.Date()`"
 knit: "bookdown::preview_chapter"
 site: "bookdown::bookdown_site"
-link-citations: yes
 output:
   msmbstyle::msmb_html_book:
     toc: TRUE
     toc_depth: 1
     split_by: chapter
+    split_bib: no
+    margin_references: FALSE
+link-citations: yes
 bibliography: msmbstyle-ex.bib
 ```
 
-Currently it is mandatory to set `toc: TRUE` and `toc_depth: 1`.  Changing the first value will remove the list of chapters entirely, and setting the second to any other value will break the code that creates the drop-down navigatin menu.  This will hopefully be made more configurable/robust in the future.
+Currently it is mandatory to set `toc: TRUE` and `toc_depth: 1`.  Changing the first value will remove the list of chapters entirely which breaks the document navigation, and similarly setting the second to any other value will confuse the code that creates the drop-down navigation menu.  This will hopefully be made more configurable/robust in the future.  `split_by: chapter` is not mandatory, removing this will still prodoce a viable set of HTML pages, but the navigation will only allow you to move between the first page of each chapter.
+
+`split_bib: no` and `margin_references: FALSE` are used to place the references in the final chapter of the book, and are used here as that was the format used in @MSMB.  It seems to work fine to change these if that is your preference.
+
+You can then produce the HTML documents either via calling the function `bookdown::render_book()`.   *Alternatively, pressing the 'Knit' button in an R Studio session will render only the chapter you are currently working on.  This is as a result of the `knit: "bookdown::preview_chapter"` entry in the YAML header.*
+
+The example below gives a (slightly convoluted) example of how to build this website from R Markdown files distributed with the package.
+
+```{r, eval = FALSE}
+## find the example Rmd files and copy to a temporary directory
+index_rmd <- list.files(system.file("extdata", package = "msmbstyle"),
+                        full.names = TRUE)
+file.copy(index_rmd, tempdir())
+
+## change directory to where we've copied the files
+## bookdown requires you to be in the same directory as the Rmd files.
+setwd(tempdir())
+
+## use bookdown to render the HTML pages
+bookdown::render_book('index.Rmd', output_dir = 'msmb_example')
+
+## open the first page in the default system browser
+browseURL('msmb_example/index.html')
+```
+
