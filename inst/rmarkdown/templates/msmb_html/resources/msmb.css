@@ -241,6 +241,16 @@ pre.r {
 
 
 @media (max-width: 760px) {
+    body {
+        padding-left: 0;
+        margin-left: 2%;
+        margin-right: 2%;
+        width: auto;
+    }
+    p {
+        width: auto;
+        font-size: 1.2em;
+    }
     .marginnote, .sidenote {
         left: 0;
     }
@@ -262,10 +272,13 @@ pre.r {
         padding-top: 0;
     }
     h1, h2, h3 {
-        width: 90%;
+        width: 100%;
     }
     h3 {
         display: inline-block;
+    }
+    #TOC {
+        max-width: 100%;
     }
 
 }
