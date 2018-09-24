@@ -96,7 +96,7 @@ More comprehensive solutions can similarly be indicated with calls to `solution_
 
 `r msmbstyle::solution_begin()`
 
-This is a more complex solution. We'll reuse the plotting code from an earlier example to include a figure in the margin.
+This is a more complex solution. We'll reuse some plotting code from the **tufte** vignette to include a figure in the margin.
 
 ```{r fig-margin2, fig.margin = TRUE, fig.cap = "MPG vs horsepower, colored by transmission.", fig.width=3.5, fig.height=3.5, cache=TRUE}
 library(ggplot2)

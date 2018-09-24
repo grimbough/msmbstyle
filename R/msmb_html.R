@@ -299,6 +299,7 @@ msmb_build_chapter = function(
              str_c(.create_section_links(chapter, include_nums = FALSE))
     
     chapter <- .number_questions(chapter)
+    chapter <- .nonumber_chap_figs(chapter)
     
     paste(c(
         head,
@@ -348,4 +349,38 @@ msmb_build_chapter = function(
     }
     
     return(chapter)
+}
+
+## if chapter is the first in a book, but is unnumbered e.g. an introduction
+## the figures will also have no numbers i.e. "Figure ."
+## This function finds them and labels Figure 1, Figure 2, etc
+#' @importFrom xml2 read_xml read_html xml_find_all xml_replace
+.nonumber_chap_figs <- function(chapter) {
+    
+    ## don't do anything if the missing figure numbers aren't found
+    if(!any(stringr::str_detect(chapter, pattern = "Figure \\."))) { return(chapter) }
+    
+    chapter2 <- paste0(chapter, collapse = "\n")
+    
+    html <- xml2::read_xml(chapter2)
+    tmp <- xml2::xml_find_all(html, xpath = "//div[starts-with(@class, 'figure')]")
+    global_pattern <- global_replacement <- NULL
+    
+    for(i in seq_along(tmp)) {
+        x <- as.character(tmp[i])
+
+        caption <- stringr::str_match(x, ".*(Figure \\.: [[:print:]\n]+)</p>")[1,2]
+        caption_new <- stringr::str_replace(caption, "Figure \\.", sprintf("Figure %s", i))
+        chapter2 <- stringr::str_replace(chapter2, pattern = caption, replacement = caption_new)
+        
+        id <- stringr::str_match(x, "id=\"(fig:[[:graph:]- ]+)\"")[1,2]
+        global_pattern <- c(global_pattern, paste0("#", id, "\">."))
+        global_replacement <- c(global_replacement, paste0("#", id, "\"> ", i))
+    }
+    
+    ## reaplce references throughout the chapter
+    names(global_replacement) <- global_pattern
+    chapter3 <- stringr::str_replace_all(chapter2, global_replacement)
+    stringr::str_split(chapter3, "\n")[[1]]
+
 }

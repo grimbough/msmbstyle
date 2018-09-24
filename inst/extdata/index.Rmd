@@ -7,6 +7,7 @@ site: "bookdown::bookdown_site"
 link-citations: yes
 output:
   msmbstyle::msmb_html_book:
+    highlight: tango
     toc: TRUE
     toc_depth: 1
     split_by: chapter
@@ -15,7 +16,7 @@ output:
 bibliography: msmbstyle-ex.bib
 ---
 
-# Introduction
+# Introduction {-}
 
 ```{r setup, include=FALSE}
 library(msmbstyle)
@@ -74,3 +75,10 @@ bookdown::render_book('index.Rmd', output_dir = 'msmb_example')
 browseURL('msmb_example/index.html')
 ```
 
+## Testing
+
+Reference to Figure \@ref(fig:example-figure).
+
+```{r, example-figure, fig.cap = "an exciting plot"}
+plot(1:20)
+```

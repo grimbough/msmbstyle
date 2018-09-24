@@ -1,7 +1,7 @@
 Package: msmbstyle
 Type: Package
 Title: MSMB Styles for R Markdown Documents
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c(
     person("Mike", "Smith", role = c("aut", "cre"), email = "grimbough@gmail.com")
     )
