@@ -196,7 +196,7 @@ question <- function(text, header = "&#x25BA; Question", label = NULL) {
 #' @rdname question
 #' @export 
 question_begin <- function(header = "&#x25BA; Question", label = NULL) {
-    question(text = "", header = header, label = label)
+    question(header = header, label = label)
 }
 
 #' @rdname question
