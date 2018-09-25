@@ -235,10 +235,18 @@ li.toc a {
     font-size: 0.9em;
 }
 
-pre.r {
-  width: 95%
+div.sourceCode {
+    width: 56%;
 }
 
+pre.sourceCode {
+  width: auto;
+}
+
+.build-date {
+  font-size: 0.8em;
+  float: left;
+}
 
 @media (max-width: 760px) {
     body {
