@@ -71,7 +71,7 @@ solution <- function(text, header = "&#x25BA; Solution", toggle = TRUE, hidden =
         } else {
             part2 <- paste0("<p>", text, "</p>",
                 "<p class=\"solution-end\">", 
-                "<span class=\"fa fa-square-o solution-icon\">", "</p>",
+                "<span class=\"fa fa-square-o solution-icon\"></span>", "</p>",
                 "</div></div>")
         }
 
@@ -102,7 +102,7 @@ solution_end <- function() {
     if (knitr::is_html_output()) {
         
         part2 <- paste0("<p class=\"solution-end\">", 
-                        "<span class=\"fa fa-square-o solution-icon\">", "</p>",
+                        "<span class=\"fa fa-square-o solution-icon\"></span>", "</p>",
                         "</div>",
                         "</div>") 
         output <- structure(part2, format = "HTML", class = "knitr_kable")
@@ -172,7 +172,7 @@ question <- function(text, header = "&#x25BA; Question", label = NULL) {
             part2 <- ""
         } else {
             part2 <- paste0("<p>", text, "</p>",
-                "<p class='question-end'>", "<span class='fa fa-square-o solution-icon'>", "</p>",
+                "<p class='question-end'>", "<span class='fa fa-square-o solution-icon'></span>", "</p>",
                 "</div></div>")
         }
 
@@ -205,7 +205,7 @@ question_end <- function() {
     
     if (knitr::is_html_output()) {
         part2 <- paste0("<p class=\"question-end\">", 
-                        "<span class=\"fa fa-square-o solution-icon\">", "</p>",
+                        "<span class=\"fa fa-square-o solution-icon\"></span>", "</p>",
                         "</div></div>") 
         output <- structure(part2, format = "HTML", class = "knitr_kable")
     }

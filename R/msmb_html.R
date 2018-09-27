@@ -356,6 +356,7 @@ msmb_build_chapter = function(
 ## the figures will also have no numbers i.e. "Figure ."
 ## This function finds them and labels Figure 1, Figure 2, etc
 #' @importFrom xml2 read_xml read_html xml_find_all xml_replace
+#' @importFrom stringr fixed
 .nonumber_chap_figs <- function(chapter) {
     
     ## don't do anything if the missing figure numbers aren't found
@@ -363,20 +364,28 @@ msmb_build_chapter = function(
     
     chapter2 <- paste0(chapter, collapse = "\n")
     
-    html <- xml2::read_xml(chapter2)
-    tmp <- xml2::xml_find_all(html, xpath = "//div[starts-with(@class, 'figure')]")
+    html <- xml2::read_html(chapter2)
+    tmp <- xml2::xml_find_all(html, 
+                              xpath = "//div[starts-with(@class, 'figure')]|//span[starts-with(@class, 'marginnote')]")
     global_pattern <- global_replacement <- NULL
     
+    curr_fig <- 1
     for(i in seq_along(tmp)) {
         x <- as.character(tmp[i])
+        
+        ## might be a marginnote without a figure - skip these
+        if(!stringr::str_detect(x, 'Figure \\.:')) { next; }
 
         caption <- stringr::str_match(x, ".*(Figure \\.: [[:print:]\n]+)</p>")[1,2]
-        caption_new <- stringr::str_replace(caption, "Figure \\.", sprintf("Figure %s", i))
-        chapter2 <- stringr::str_replace(chapter2, pattern = caption, replacement = caption_new)
+        caption_new <- stringr::str_replace(caption, "Figure \\.", sprintf("Figure %s", curr_fig))
+        chapter2 <- stringr::str_replace(chapter2, 
+                                         pattern = stringr::fixed(caption), 
+                                         replacement = caption_new)
         
         id <- stringr::str_match(x, "id=\"(fig:[[:graph:]- ]+)\"")[1,2]
         global_pattern <- c(global_pattern, paste0("#", id, "\">."))
         global_replacement <- c(global_replacement, paste0("#", id, "\"> ", i))
+        curr_fig <- curr_fig + 1
     }
     
     ## reaplce references throughout the chapter
