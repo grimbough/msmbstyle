@@ -82,3 +82,7 @@ Reference to Figure \@ref(fig:example-figure).
 ```{r, example-figure, fig.cap = "an exciting plot"}
 plot(1:20)
 ```
+
+```{r, example-figure-2, fig.cap = "second plot", fig.margin = TRUE}
+plot(1:20)
+```

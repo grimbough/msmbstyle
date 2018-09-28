@@ -4,6 +4,8 @@ body {
   font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
   background-color: #fefefe;
   margin-top: 0;
+  padding-left: inherit;
+  width: auto;
 }
 
 .title {
@@ -41,10 +43,6 @@ its only here while we sort out the book*/
 }
 
 .solution-end, .question-end {
-/*  width: 55%; */
-/*  text-align: right; */
-/*  float: right; */
-/*  margin-top: -30px; */
     height: 1em;
 }
 
@@ -111,6 +109,10 @@ li p {
 
 
 /* header bar */
+
+#TOC {
+    max-width: none;
+}
 
 ul.navbar {
     list-style-type: none;
@@ -200,11 +202,14 @@ when window exceeds 1615px */
 }
 
 .toc-sections {
-    font-size: 0.7rem;
-    padding-left: 0;
-    padding-right: 0;
-    background-color: rgb(24,129,194,0.3);
+    margin-top: 40px;
+    border: 1px solid #ccc;
     list-style-type: none;
+    position: fixed;
+    overflow: auto;
+    border-radius: 3px;
+    padding-inline-start: 10px;
+    padding-inline-end: 10px;
 }
 
 li.toc {

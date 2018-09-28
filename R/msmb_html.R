@@ -286,38 +286,50 @@ msmb_build_chapter = function(
     head[last_script] <- paste(head[last_script], toggle_script(), sep = "\n")
     
     # add a has-sub class to the <li> items that has sub lists
-    toc = gsub('^(<li>)(.+<ul>)$', '<li class="has-sub">\\2', toc)
+    #toc = gsub('^(<li>)(.+<ul>)$', '<li class="has-sub">\\2', toc)
     
-    toc = str_replace_all(toc, 
-                          pattern = 'href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 
-                          replacement = 'href="\\1')
+    #toc = str_replace_all(toc, 
+    #                      pattern = 'href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 
+    #                      replacement = 'href="\\1')
     
     # manipulate the TOC for this page to include sections
-    this_page = min(which(str_detect(toc, html_cur)))
-    toc[ this_page ] <- toc[ this_page ] %>%
-             str_replace('href', 'id="active-page" href') %>%
-             str_c(.create_section_links(chapter, include_nums = FALSE))
+    # this_page = min(which(str_detect(toc, html_cur)))
+    # toc[ this_page ] <- toc[ this_page ] %>%
+    #          str_replace('href', 'id="active-page" href') %>%
+    #          str_c(.create_section_links(chapter, include_nums = FALSE))
+    
+    chapter_nav <- .create_section_links(chapter, include_nums = FALSE)
     
     chapter <- .number_questions(chapter)
-    chapter <- .nonumber_chap_figs(chapter)
+    chapter_body <- .nonumber_chap_figs(chapter)
     
     paste(c(
         head,
-        '<div class="row">',
-        '<div class="col-sm-12">',
-        toc,
+        '<div class="container">',
+          '<div class="row">',
+            '<div class="msmb-header">',
+                toc,
+            '</div>',
+          '</div>',
         '</div>',
-        '</div>',
-        '<div class="row">',
-        '<div class="col-sm-12">',
-        chapter,
-        '<p style="text-align: center;">',
-        bookdown:::button_link(link_prev, 'Previous'),
-        bookdown:::edit_link(rmd_cur),
-        bookdown:::button_link(link_next, 'Next'),
-        '</p>',
-        '<p class="build-date">Page built: ', as.character(Sys.Date()), '</p>',
-        '</div>',
+        '<div class="container">',
+          '<div class="row">',
+            '<div class="col-xs-12 col-sm-3 col-md-2">',
+              chapter_nav,
+            '</div>',
+            '<div class="col-xs-12 col-sm-9 col-md-10">',
+              chapter_body,
+            '</div>',
+          '</div>',
+          '<div class="row">',
+            '<div class="col-xs-12">',
+              '<p style="text-align: center;">',
+                bookdown:::button_link(link_prev, 'Previous'),
+                bookdown:::button_link(link_next, 'Next'),
+              '</p>',
+              '<p class="build-date">Page built: ', as.character(Sys.Date()), '</p>',
+            '</div>',
+          '</div>',
         '</div>',
         foot
     ), collapse = '\n')
