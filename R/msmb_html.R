@@ -230,9 +230,9 @@ msmb_html_dependency = function() {
     if(length(section_names) != length(section_links)) 
         stop('Not same length')
     
-    tmp <- c('<ul class="toc-sections">', 
-             paste0('<li class="toc"><a href="#', section_links, '">', section_names, '</a></li>'),
-             '</ul>')
+    tmp <- c('<div class="toc-section">', 
+             paste0('<ul class="section-link"><a href="#', section_links, '">', section_names, '</a></ul>'),
+             '</div>')
     
     return(paste(tmp, collapse = '\n'))
     
@@ -282,8 +282,8 @@ msmb_build_chapter = function(
     
     ## insert script for solution toggle
     ## we put it after the msmb.css as this should always be present
-    last_script <- max(str_which(head, "msmb.css\""))
-    head[last_script] <- paste(head[last_script], toggle_script(), sep = "\n")
+    msmb_css_line <- max(str_which(head, "msmb.css\""))
+    head[msmb_css_line] <- paste(toggle_script(), head[msmb_css_line], sep = "\n")
     
     # add a has-sub class to the <li> items that has sub lists
     #toc = gsub('^(<li>)(.+<ul>)$', '<li class="has-sub">\\2', toc)
@@ -305,14 +305,12 @@ msmb_build_chapter = function(
     
     paste(c(
         head,
-        '<div class="container">',
+        '<div class="container navbar-fixed-top msmb-header">',
           '<div class="row">',
-            '<div class="msmb-header">',
-                toc,
-            '</div>',
+              toc,
           '</div>',
         '</div>',
-        '<div class="container">',
+        '<div class="container chapter-content">',
           '<div class="row">',
             '<div class="col-xs-12 col-sm-3 col-md-2">',
               chapter_nav,

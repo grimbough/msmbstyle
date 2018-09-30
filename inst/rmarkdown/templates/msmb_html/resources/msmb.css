@@ -6,6 +6,7 @@ body {
   margin-top: 0;
   padding-left: inherit;
   width: auto;
+  max-width: unset;
 }
 
 .title {
@@ -110,8 +111,12 @@ li p {
 
 /* header bar */
 
+.chapter-content { 
+    padding-top: 80px;
+}
+
 #TOC {
-    max-width: none;
+    max-width: 1170px;
 }
 
 ul.navbar {
@@ -210,17 +215,11 @@ when window exceeds 1615px */
     border-radius: 3px;
     padding-inline-start: 10px;
     padding-inline-end: 10px;
+    width: 14%;
 }
 
 li.toc {
-    padding: 0;
-    font-size: 1.1rem;
-}
-
-li.toc a {
-    padding-left: 10%;
-    padding-top: 1px;
-    padding-bottom: 1px;
+    padding: 2px 0;
 }
 
 /* formatting tables */
@@ -251,6 +250,29 @@ pre.sourceCode {
 .build-date {
   font-size: 0.8em;
   float: left;
+}
+
+
+div.toc-section {
+  position: fixed;
+  width: 16%;
+  max-width: 190px;
+  max-height: 85%;
+  border: 1px solid #ccc;
+  margin-top: 20px;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.toc-section {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.toc-section {
+    width: 100%;
+    max-width: none;
+  }
 }
 
 @media (max-width: 760px) {
