@@ -29,9 +29,8 @@ msmb_html = function(
   margin_references = TRUE
 ) {
 
-  #tufte_variant = match.arg(tufte_variant)
-  ##if (missing(tufte_features) && tufte_variant != 'default') 
-  tufte_variant = "envisioned"
+  ##tufte_variant = "envisioned"
+  tufte_variant = "default"    
   tufte_features = character()
   
   html_document2 = function(..., extra_dependencies = list()) {
@@ -127,6 +126,7 @@ msmb_html = function(
       z
     })
     
+    x = .add_meta_tags(x, md_file = input)
     x = .toc_2_navbar(x, md_file = input)
 
     xfun::write_utf8(x, output)
@@ -253,26 +253,86 @@ msmb_html_dependency = function() {
             bookdown:::fetch_yaml() %>%
             rmarkdown:::parse_yaml_front_matter()
     
-    header <- paste0('<p class="title">', yaml$title,
-                     '<p><p class="author">', 
-                     paste(yaml$author, collapse = ', '), '</p>')
-
+    ## include the cover image in the og meta tags
+    if(!is.null(yaml$cover)) { 
+        paste0('<meta property="og:image" content="',
+               yaml$cover, '" />') 
+    }
+    
+    # header <- paste0('<p class="title">', yaml$title,
+    #                  '<p><p class="author">', 
+    #                  paste(yaml$author, collapse = ', '), '</p>')
+    # 
     toc_start <- min(which(str_detect(x, '<ul>')))
     toc_end <- min(which(str_detect(x, '</ul>')))
-    x[toc_start] <- paste0('<ul class="navbar">\n',
-        '<li class="msmb">', header, '</li>\n',
-        '<li class="dropdown" style="float:right">\n',
-        '<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>\n',
-        '<div class="dropdown-content">')
-    x[toc_start:toc_end] <- x[toc_start:toc_end] %>%
-        str_replace_all('<li>', '') %>% 
-        str_replace_all('</li>', '') #%>%
-        #str_replace_all('href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 'href="\\1')
-    x[toc_end] <- '</div>\n</li>'
-
-    ## close the navbar list
-    x[toc_end] <- str_c(x[toc_end], '\n</ul>')
+    # x[toc_start] <- paste0('<ul class="navbar">\n',
+    #     '<li class="msmb">', header, '</li>\n',
+    #     '<li class="dropdown" style="float:right">\n',
+    #     '<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>\n',
+    #     '<div class="dropdown-content">')
+    # x[toc_start:toc_end] <- x[toc_start:toc_end] %>%
+    #     str_replace_all('<li>', '') %>% 
+    #     str_replace_all('</li>', '') #%>%
+    #     #str_replace_all('href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 'href="\\1')
+    # x[toc_end] <- '</div>\n</li>'
+    # 
+    # ## close the navbar list
+    # x[toc_end] <- str_c(x[toc_end], '\n</ul>')
     
+    x[toc_start:toc_end] <- ''
+    x[toc_start] <- '<nav class="navbar navbar-default">
+        <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Brand</a>
+        </div>
+        
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+        <li><a href="#">Link</a></li>
+        <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">One more separated link</a></li>
+        </ul>
+        </li>
+        </ul>
+        <form class="navbar-form navbar-left">
+        <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Link</a></li>
+        <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+        </ul>
+        </li>
+        </ul>
+        </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+        </nav>'
     return(x)
 }
 
@@ -403,4 +463,25 @@ msmb_build_chapter = function(
     chapter3 <- stringr::str_replace_all(chapter2, global_replacement)
     stringr::str_split(chapter3, "\n")[[1]]
 
+}
+
+## Add additional <meta> tags e.g. cover image to display in links
+#' @importFrom stringr str_which
+#' @importFrom xfun read_utf8
+.add_meta_tags <- function(x, md_file) {
+    
+    og_type_line <- str_which(x, "<meta property=\"og:type\"")
+    
+    yaml <- xfun::read_utf8(md_file) %>%
+        bookdown:::fetch_yaml() %>%
+        rmarkdown:::parse_yaml_front_matter()
+    
+    ## include the cover image if there is one
+    if(!is.null(yaml$cover) && length(og_type_line)) { 
+        og_image_tag <- paste0('<meta property="og:image" content="',
+               yaml$cover, '" />') 
+        x[og_type_line] <- paste(x[og_type_line], og_image_tag, "\n")
+    }
+    
+    return(x)
 }

@@ -14,6 +14,7 @@ output:
     split_bib: no
     margin_references: FALSE
 bibliography: msmbstyle-ex.bib
+cover: "images/ex-cover-small.jpg"
 ---
 
 # Introduction {-}
