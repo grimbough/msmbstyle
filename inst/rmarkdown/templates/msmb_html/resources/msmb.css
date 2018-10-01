@@ -7,6 +7,7 @@ body {
   padding-left: inherit;
   width: auto;
   max-width: unset;
+  padding-top: 50px;
 }
 
 .title {
@@ -55,11 +56,6 @@ its only here while we sort out the book*/
     cursor: pointer;
 }
 
-/*
-.marginnote, .sidenote {
-  margin-left: -100%;
-}
-*/
 
 .margintab {
   margin: 0;
@@ -91,8 +87,7 @@ h2 {
   border-bottom-style: solid;
   width: 55%;
   padding-bottom: 0.5rem;
-  margin-top: 3em;
-  font-weight: bold;
+  margin-top: 1.5rem;
 }
 
 h3 {
@@ -111,10 +106,6 @@ li p {
 
 /* header bar */
 
-.chapter-content { 
-    padding-top: 80px;
-}
-
 #TOC {
     max-width: 1170px;
 }
@@ -129,17 +120,6 @@ ul.navbar {
     top: 0;
 } */
 
-li .dropbtn {
-    display: inline-block;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    text-shadow: none;
-    line-height: 2.0rem;
-    margin-right: 16px;
-    padding-top: 55px;
-    padding-bottom: 15px;
-}
 
 /*
 li.dropdown {
@@ -185,7 +165,7 @@ when window exceeds 1615px */
     text-shadow: none;
 }
 
-.dropdown-content a:hover {
+.dropdown-menu a:hover {
     background-color: rgb(24,129,194,0.4);
 }
 
@@ -201,10 +181,26 @@ when window exceeds 1615px */
 } 
 */
 
+/* BEGIN: chapter navigation dropdown */
+
+.dropdown a {
+    background: unset;
+}
+
+.dropdown-menu a:link {
+    background-position-y: 0;
+    text-shadow: none;
+    background-size: 0;
+}
+
+/* END: chapter navigation dropdown */
+
 #active-page {
     background-color: #1881c2;
     color: white;
 }
+
+/* within chapter navigation */
 
 .toc-sections {
     margin-top: 40px;
@@ -217,6 +213,18 @@ when window exceeds 1615px */
     padding-inline-end: 10px;
     width: 14%;
 }
+
+.section-link {
+    width: auto;
+}
+
+.section-link a:link {
+    background-position-y: 0;
+    text-shadow: none;
+    background-size: 0;
+} 
+
+/**/
 
 li.toc {
     padding: 2px 0;
@@ -263,16 +271,16 @@ pre.sourceCode {
 
 div.toc-section {
   position: fixed;
-  width: 16%;
-  max-width: 190px;
+  width: 15%;
+  max-width: 175px;
   max-height: 85%;
   border: 1px solid #ccc;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
   div.toc-section {
-    width: 25%;
+    width: 23%;
   }
 }
 
