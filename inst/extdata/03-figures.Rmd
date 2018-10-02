@@ -28,7 +28,7 @@ The examples shown below are taken directly from the **tufte** vignette (https:/
 
 Images and graphics play an integral role in Tufte's work. To place figures in the margin you can use the **knitr** chunk option `fig.margin = TRUE`. For example:
 
-```{r fig-margin, fig.margin = TRUE, fig.cap = "MPG vs horsepower, colored by transmission.", fig.width=3.5, fig.height=3.5, cache=TRUE}
+```{r fig-margin, fig.margin = TRUE, fig.cap = "MPG vs horsepower, colored by transmission.", fig.width=3.5, fig.height=3.5, cache=FALSE}
 library(ggplot2)
 mtcars2 <- mtcars
 mtcars2$am <- factor(
@@ -56,7 +56,7 @@ For the sake of portability between LaTeX and HTML, you should keep the margin c
 
 You can arrange for figures to span across the entire page by using the chunk option `fig.fullwidth = TRUE`.
 
-```{r fig-fullwidth, fig.width = 10, fig.height = 2, fig.fullwidth = TRUE, fig.cap = "A full width figure.", warning=FALSE, cache=TRUE}
+```{r fig-fullwidth, fig.width = 10, fig.height = 2, fig.fullwidth = TRUE, fig.cap = "A full width figure.", warning=FALSE, cache=FALSE}
 ggplot(diamonds, aes(carat, price)) + geom_smooth() +
   facet_grid(~ cut)
 ```
@@ -67,7 +67,7 @@ ggplot(diamonds, aes(carat, price)) + geom_smooth() +
 
 Besides margin and full width figures, you can of course also include figures constrained to the main column. This is the default type of figures in the LaTeX/HTML output.
 
-```{r fig-main, fig.cap = "A figure in the main column.", cache=TRUE}
+```{r fig-main, fig.cap = "A figure in the main column.", cache=FALSE}
 ggplot(diamonds, aes(cut, price)) + geom_boxplot()
 ```
 

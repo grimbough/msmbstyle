@@ -48,7 +48,7 @@ msmb_html = function(
   # when fig.margin = TRUE, set fig.beforecode = TRUE so plots are moved before
   # code blocks, and they can be top-aligned
   ohooks = knitr::opts_hooks$set(fig.margin = function(options) {
-  #  if (isTRUE(options$fig.margin)) options$fig.beforecode = TRUE
+    if (isTRUE(options$fig.margin)) options$fig.beforecode = TRUE
     options
   })
 
@@ -85,7 +85,7 @@ msmb_html = function(
     if (margin_references) x = tufte:::margin_references(x)
 
     # place figure captions in margin notes
-    x[x == '<p class="caption">'] = '<p class="caption marginnote shownote">'
+    #x[x == '<p class="caption">'] = '<p class="caption marginnote shownote">'
 
     # move </caption> to the same line as <caption>; the previous line should
     # start with <table
@@ -148,7 +148,7 @@ msmb_html = function(
     }
     res = knitr::hook_plot_md(x, options)
     if (fig_margin) {
-            res = gsub_fixed('<div class="figure">', '<div class="col-sm-3">', res)
+            res = gsub_fixed('<div class="figure">', '<div class="col-sm-3 col-sm-push-9">', res)
             res = gsub_fixed('<p class="caption">', '<div class="caption">', res)
             res = gsub_fixed('</p>', '</div>', res)
         # }
@@ -168,10 +168,14 @@ msmb_html = function(
       
       chunk_marks <- stringr::str_locate_all(res, "```")[[1]]
       
+      col_div <- ifelse(isTRUE(options$fig.margin),
+                        '<div class="col-sm-9 col-sm-pull-3">\n```',
+                        '<div class="col-sm-9">\n```')
+      
       for(i in seq_len(nrow(chunk_marks))) {
           chunk_mark <- stringr::str_locate_all(res, "```")[[1]][i,]
           stringr::str_sub(res, chunk_mark[1], chunk_mark[2]) <- ifelse(i %% 2, 
-                                                              '<div class="col-sm-9">\n```',
+                                                              col_div,
                                                               '```\n</div>')
       }
       res

@@ -269,6 +269,10 @@ pre.sourceCode {
   width: auto;
 }
 
+pre {
+    width: auto;
+}
+
 
 .build-date {
   font-size: 0.8em;
