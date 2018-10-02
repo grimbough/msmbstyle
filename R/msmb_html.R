@@ -48,7 +48,7 @@ msmb_html = function(
   # when fig.margin = TRUE, set fig.beforecode = TRUE so plots are moved before
   # code blocks, and they can be top-aligned
   ohooks = knitr::opts_hooks$set(fig.margin = function(options) {
-    if (isTRUE(options$fig.margin)) options$fig.beforecode = TRUE
+  #  if (isTRUE(options$fig.margin)) options$fig.beforecode = TRUE
     options
   })
 
@@ -134,6 +134,7 @@ msmb_html = function(
   }
 
   if (is.null(format$knitr$knit_hooks)) format$knitr$knit_hooks = list()
+  
   format$knitr$knit_hooks$plot = function(x, options) {
     # make sure the plot hook always generates HTML code instead of ![]()
     if (is.null(options$out.extra)) options$out.extra = ''
@@ -143,27 +144,41 @@ msmb_html = function(
       if (is.null(options$fig.cap)) options$fig.cap = ' ' # empty caption
     } else if (is.null(options$fig.topcaption)) {
       # for normal figures, place captions at the top of images
-      options$fig.topcaption = TRUE
+      #options$fig.topcaption = TRUE
     }
     res = knitr::hook_plot_md(x, options)
     if (fig_margin) {
-      res = gsub_fixed('<p class="caption">', '<!--\n<p class="caption marginnote">-->', res)
-      res = gsub_fixed('</p>', '<!--</p>-->', res)
-      res = gsub_fixed('</div>', '<!--</div>--></span></p>', res)
-      res = gsub_fixed(
-        '<div class="figure">', paste0(
-          '<p>', '<span class="marginnote shownote">', '\n<!--\n<div class="figure">-->'
-        ), res
-      )
+            res = gsub_fixed('<div class="figure">', '<div class="col-sm-3">', res)
+            res = gsub_fixed('<p class="caption">', '<div class="caption">', res)
+            res = gsub_fixed('</p>', '</div>', res)
+        # }
     } else if (fig_fullwd) {
-      res = gsub_fixed('<div class="figure">', '<div class="figure fullwidth">', res)
-      res = gsub_fixed(
-        '<p class="caption">', '<p class="caption marginnote shownote">', res
-      )
+      res = gsub_fixed('<div class="figure">', '<div class="figure col-sm-12">', res)
+      res = gsub_fixed('<p class="caption">', '<p class="caption marginnote shownote">', res)
+    } else { ## normal figures
+        res = gsub_fixed('<div class="figure">', '<div class="row figure"><div class="col-sm-9">', res) 
+        res = gsub_fixed('<p class="caption">', '</div>\n<div class="caption col-sm-3">', res)
+        res = gsub_fixed('</p>', '</div>', res)
     }
     res
   }
+  
+  format$knitr$knit_hooks$chunk = function(x, options) {
+      res <- paste0('<div class="row test">', x, '</div>')
+      
+      chunk_marks <- stringr::str_locate_all(res, "```")[[1]]
+      
+      for(i in seq_len(nrow(chunk_marks))) {
+          chunk_mark <- stringr::str_locate_all(res, "```")[[1]][i,]
+          stringr::str_sub(res, chunk_mark[1], chunk_mark[2]) <- ifelse(i %% 2, 
+                                                              '<div class="col-sm-9">\n```',
+                                                              '```\n</div>')
+      }
+      res
+  }
 
+
+  
   knitr::knit_engines$set(marginfigure = function(options) {
     options$type = 'marginnote'
     if (is.null(options$html.tag)) options$html.tag = 'span'
@@ -242,6 +257,24 @@ msmb_html_dependency = function() {
     
 }
 
+.apply_rows <- function(x) {
+    
+    x <- x %>%
+        stringr::str_replace_all('<h1>', '<div class="row">\n<div class="col-sm-9">\n<h1>') %>%
+        stringr::str_replace_all('</h1>', '</h1>\n</div>\n</div>') %>%
+        stringr::str_replace_all('<h2>', '<div class="row">\n<div class="col-sm-9">\n<h2>') %>%
+        stringr::str_replace_all('</h2>', '</h2>\n</div>\n</div>') %>%
+        stringr::str_replace('<p([> ])', '<div class="row">\n<div class="col-sm-9">\n<p\\1') %>%
+        stringr::str_replace('</p>', '</p>\n</div>\n</div>') %>%
+       # stringr::str_replace('<div class="sourceCode', '<div class="col-sm-9 sourceCode>') #%>%
+       # stringr::str_replace('</code></pre></div>', '</code></pre></div></div>') 
+        stringr::str_replace_all('<div class="row">\n<div class="col-sm-9">\n<p>(<img [[:print:]]+)</p>\n</div>\n</div>',
+                                 '<p>\\1</p>')
+    
+    return(x)
+    
+}
+
 ## Converts the table of contents HTML produced by bookdown into
 ## the format required for the drop-down menu navigation.
 #' @importFrom stringr str_replace_all str_replace str_c
@@ -309,22 +342,14 @@ msmb_build_chapter = function(
     ## we put it after the msmb.css as this should always be present
     msmb_css_line <- max(str_which(head, "msmb.css\""))
     head[msmb_css_line] <- paste(toggle_script(), head[msmb_css_line], sep = "\n")
-    
-    # add a has-sub class to the <li> items that has sub lists
-    #toc = gsub('^(<li>)(.+<ul>)$', '<li class="has-sub">\\2', toc)
-    
+
     #toc = str_replace_all(toc, 
     #                      pattern = 'href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 
     #                      replacement = 'href="\\1')
     
-    # manipulate the TOC for this page to include sections
-    # this_page = min(which(str_detect(toc, html_cur)))
-    # toc[ this_page ] <- toc[ this_page ] %>%
-    #          str_replace('href', 'id="active-page" href') %>%
-    #          str_c(.create_section_links(chapter, include_nums = FALSE))
-    
     chapter_nav <- .create_section_links(chapter, include_nums = FALSE)
     
+    chapter <- .apply_rows(chapter)
     chapter <- .number_questions(chapter)
     chapter_body <- .nonumber_chap_figs(chapter)
     
@@ -337,10 +362,10 @@ msmb_build_chapter = function(
         '</div>',
         '<div class="container chapter-content">',
           '<div class="row">',
-            '<div class="col-xs-12 col-sm-3 col-md-2">',
+            '<div class="hidden-sm col-md-2">',
               chapter_nav,
             '</div>',
-            '<div class="col-xs-12 col-sm-9 col-md-10">',
+            '<div class="col-xs-12 col-md-10">',
               chapter_body,
             '</div>',
           '</div>',
