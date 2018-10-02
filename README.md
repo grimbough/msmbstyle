@@ -6,7 +6,7 @@ This branch is for exploring using Bootstrap to provide the layout, so I can mor
 
 A rough example of the current status (2018-10-02) can be found at http://www-huber.embl.de/users/msmith/msmbstyle/bootstrap/
 
-#Ackowledgments
+# Acknowledgments
 
 ## Funding 
 

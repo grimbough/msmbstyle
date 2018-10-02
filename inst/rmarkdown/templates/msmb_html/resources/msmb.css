@@ -107,6 +107,7 @@ li p {
 
 div.figure {
     max-width: 100%;
+    margin: 0;
 }
 
 /* header bar */

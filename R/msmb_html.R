@@ -154,7 +154,7 @@ msmb_html = function(
         # }
     } else if (fig_fullwd) {
       res = gsub_fixed('<div class="figure">', '<div class="figure col-sm-12">', res)
-      res = gsub_fixed('<p class="caption">', '<p class="caption marginnote shownote">', res)
+      res = gsub_fixed('<p class="caption">', '<p class="caption marginnote">', res)
     } else { ## normal figures
         res = gsub_fixed('<div class="figure">', '<div class="row figure"><div class="col-sm-9">', res) 
         res = gsub_fixed('<p class="caption">', '</div>\n<div class="caption col-sm-3">', res)
@@ -164,7 +164,11 @@ msmb_html = function(
   }
   
   format$knitr$knit_hooks$chunk = function(x, options) {
-      res <- paste0('<div class="row test">', x, '</div>')
+      
+      res <- x
+      ## we only want to add a row if this isn't margin content
+      if(!stringr::str_detect(options$engine, "marginfigure"))
+        res <- paste0('<div class="row test">', res, '</div>')
       
       chunk_marks <- stringr::str_locate_all(res, "```")[[1]]
       
@@ -181,15 +185,25 @@ msmb_html = function(
       res
   }
 
+  ## engine for placing arbitrary content in the margin
+  knitr::knit_engines$set(marginfigure2 = function(options) {
+      options$type = 'col-sm-3 margin2'
+      if (is.null(options$html.tag)) options$html.tag = 'div'
+      eng_block = knitr::knit_engines$get('block')
+      eng_block(options) %>%
+          stringr::str_replace_all('<(/?)p>', '<\\1div>') %>%
+          paste0('</div>') ## we add a tag that closes a row defined elsewhere
+      
+  })
 
   
-  knitr::knit_engines$set(marginfigure = function(options) {
-    options$type = 'marginnote'
-    if (is.null(options$html.tag)) options$html.tag = 'span'
-    options$html.before = tufte:::marginnote_html()
-    eng_block = knitr::knit_engines$get('block')
-    eng_block(options)
-  })
+  # knitr::knit_engines$set(marginfigure = function(options) {
+  #   options$type = 'marginnote'
+  #   if (is.null(options$html.tag)) options$html.tag = 'span'
+  #   options$html.before = tufte:::marginnote_html()
+  #   eng_block = knitr::knit_engines$get('block')
+  #   eng_block(options)
+  # })
 
   format$inherits = 'html_document'
 
@@ -264,15 +278,15 @@ msmb_html_dependency = function() {
 .apply_rows <- function(x) {
     
     x <- x %>%
-        stringr::str_replace_all('<h1>', '<div class="row">\n<div class="col-sm-9">\n<h1>') %>%
-        stringr::str_replace_all('</h1>', '</h1>\n</div>\n</div>') %>%
-        stringr::str_replace_all('<h2>', '<div class="row">\n<div class="col-sm-9">\n<h2>') %>%
-        stringr::str_replace_all('</h2>', '</h2>\n</div>\n</div>') %>%
-        stringr::str_replace('<p([> ])', '<div class="row">\n<div class="col-sm-9">\n<p\\1') %>%
-        stringr::str_replace('</p>', '</p>\n</div>\n</div>') %>%
+        stringr::str_replace_all('<h1>', '<div class="row">\n<div class="col-sm-9"><h1>') %>%
+        stringr::str_replace_all('</h1>', '</h1></div>\n</div>') %>%
+        stringr::str_replace_all('<h2>', '<div class="row">\n<div class="col-sm-9"><h2>') %>%
+        stringr::str_replace_all('</h2>', '</h2></div>\n</div>') %>%
+        stringr::str_replace('<p([> ])', '<div class="row">\n<div class="col-sm-9"><p\\1') %>%
+        stringr::str_replace('</p>', '</p></div>\n</div>') %>%
        # stringr::str_replace('<div class="sourceCode', '<div class="col-sm-9 sourceCode>') #%>%
        # stringr::str_replace('</code></pre></div>', '</code></pre></div></div>') 
-        stringr::str_replace_all('<div class="row">\n<div class="col-sm-9">\n<p>(<img [[:print:]]+)</p>\n</div>\n</div>',
+        stringr::str_replace_all('<div class="row">\n<div class="col-sm-9"><p>(<img [[:print:]]+)</p></div>\n</div>',
                                  '<p>\\1</p>')
     
     return(x)
@@ -353,9 +367,12 @@ msmb_build_chapter = function(
     
     chapter_nav <- .create_section_links(chapter, include_nums = FALSE)
     
-    chapter <- .apply_rows(chapter)
+    chapter <- .apply_rows(chapter) %>%
+        .put_marginfig_in_row() %>%
+        .move_margin_notes()
     chapter <- .number_questions(chapter)
     chapter_body <- .nonumber_chap_figs(chapter)
+    
     
     paste(c(
         head,
@@ -479,3 +496,43 @@ msmb_build_chapter = function(
     
     return(x)
 }
+
+## find any instance of a marginfigure inserted by a code chunk
+## and remove the </div> above it, we have already provided a replacement
+.put_marginfig_in_row <- function(x) {
+    
+    idx <- str_which(x, '<div class="col-sm-3 margin2">')
+    if(length(idx)) {
+        x[idx-1] <- stringr::str_remove(x[idx-1], '</div>$')
+    }
+    x
+}
+
+## moves margin_note entries outside the main column <div>
+#' @importFrom stringr str_which fixed str_replace str_trim str_match
+#' @importFrom markdown renderMarkdown
+.move_margin_notes <- function(x) {
+    
+    margin_note_idx <- stringr::str_which(x, '<!--MOVE')
+    
+    for(i in seq_along(margin_note_idx)) {
+        idx <- margin_note_idx[i]
+        margin_note_md <- stringr::str_match(x[idx], "<!--MOVE<div class=col-sm-3>(.*)</div>EVOM-->")[1,2]
+        margin_note_html <- markdown::renderMarkdown(text = margin_note_md) %>%
+            stringr::str_trim()
+        
+        x[idx] <- stringr::str_replace(x[idx], fixed(margin_note_md), margin_note_html)
+        x[idx] <- stringr::str_replace(x[idx], 
+                                       "(.*)<!--MOVE(.*)EVOM-->(.*)", 
+                                       "\\1\\3\\2")
+    }
+    return(x)
+}
+
+#' @export
+margin_note <- function(text) {
+    
+    sprintf('<!--MOVE<div class=col-sm-3>%s</div>EVOM-->', text)
+    
+}
+    
