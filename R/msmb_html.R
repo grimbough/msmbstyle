@@ -98,18 +98,8 @@ msmb_html = function(
         x[i + j] = ''
       }
     }
-    # place table captions in the margin
-    r = '^<caption>(.+)</caption>$'
-    for (i in grep(r, x)) {
-      # the previous line should be <table> or <table class=...>
-      if (!grepl('^<table( class=.+)?>$', x[i - 1])) next
-      cap = gsub(r, '\\1', x[i])
-      x[i] = x[i - 1]
-      x[i - 1] = paste0(
-        '<p><!--\n<caption>-->', '<span class="marginnote shownote">',
-        cap, '</span><!--</caption>--></p>'
-      )
-    }
+    
+    x <- .arrange_tables(x)
 
     # add an incremental number to the id of <label> and <input> for margin notes
     r = '(<label|<input type="checkbox") (id|for)(="tufte-mn)-(" )'
@@ -131,7 +121,8 @@ msmb_html = function(
     x = .toc_2_navbar(x, md_file = input)
     x = .catch_sourceCode(x) %>%
         .catch_questions() %>%
-        .clean_columns()
+        .clean_columns() %>% 
+        .apply_rows2()
 
     xfun::write_utf8(x, output)
     output
@@ -173,9 +164,11 @@ msmb_html = function(
       ## we only want to add a row if this isn't margin content
       if(!stringr::str_detect(options$engine, "marginfigure")) {
         res <- paste0("<div class='row test'>", res)
-        if(str_detect(res, "<div class='question'")) {
+        if(str_detect(res, "<div class='ques-sol'")) {
             ## close chunk row before starting question
-            res <- gsub_fixed("<div class='question'", "</div><div class='question'", x = res)
+            res <- gsub_fixed("<div class='ques-sol'", "</div><div class='ques-sol'", x = res)
+      #  } else if (str_detect(res, "<table>")) {
+      #      res <- gsub_fixed("<table>", "</div><table>", x = res)
         } else {
             res <- paste0(res, '</div>')
         }
@@ -290,6 +283,22 @@ msmb_html_dependency = function() {
     
 }
 
+.apply_rows2 <- function(x) {
+    
+    html <- paste0(x, collapse = "\n") %>%
+        read_html()
+    nodes <- xml2::xml_find_all(html, xpath = "//table")
+    for(i in seq_along(nodes)) {
+        node <- nodes[i]
+        if( !xml_has_attr(node, "class") && 
+            !grepl(pattern = 'col-sm-', x = xml_attrs(xml_parent(node)) ) ) {
+            xml_add_parent(node, "div", class = "row") 
+            xml_add_parent(node, "div", class = "col-sm-9") 
+        }
+    }
+    stringr::str_split(as.character(html), pattern = "\n")[[1]]
+}
+
 .catch_sourceCode <- function(x) {
     
     html <- paste0(x, collapse = "\n") %>%
@@ -309,7 +318,7 @@ msmb_html_dependency = function() {
     
     html <- paste0(x, collapse = "\n") %>%
         read_html()
-    code_nodes <- xml2::xml_find_all(html, xpath = "//span[starts-with(@class, 'question-')]")
+    code_nodes <- xml2::xml_find_all(html, xpath = "//span[starts-with(@class, 'question-')]|//span[starts-with(@class, 'solution-')]")
     for(i in seq_along(code_nodes)) {
         node <- code_nodes[i]
         if( !grepl(pattern = 'col-sm-', x = xml_attrs(xml_parent(node)) ) ) {
@@ -577,4 +586,51 @@ margin_note <- function(text) {
     
 }
 
+## for main body tables, we place the caption in the margin.
+## for tables with 'margintab' as a class we put both the table
+## and caption in the margin.
+.arrange_tables <- function(x) {
     
+    # move </caption> to the same line as <caption>; the previous line should
+    # start with <table
+    for (i in intersect(grep('^<caption>', x), grep('^<table', x) + 1)) {
+        j = 0
+        while (!grepl('</caption>$', x[i])) {
+            j = j + 1
+            x[i] = paste0(x[i], x[i + j])
+            x[i + j] = ''
+        }
+    }
+    
+    # place table captions in the margin
+    # keep the commented <!--<caption>--> tags, these are used to number tables
+    r = '^<caption>(.+)</caption>$'
+    tab_close <- str_which(x, "</table>")
+    for (i in grep(r, x)) {
+        # the previous line should be <table> or <table class=...>
+        if (!grepl('^<table( class=.+)?>$', x[i - 1])) next
+        
+        cap = gsub(r, '\\1', x[i])            
+        x[i] = x[i - 1]
+        if(!grepl('class ?=.*margintab ?', x[i - 1])) { ## not a margin table
+            x[i - 1] = paste0(
+                '</div>',
+                '<div class="row">',
+                '<!--\n<caption>-->',
+                '<div class="col-sm-3 col-sm-push-9">',
+                cap, '</div><!--</caption>-->',
+                '<div class="col-sm-9 col-sm-pull-3">'
+            )
+            ## close the row div after the table
+            k <- min(tab_close[tab_close > i])
+            x[k] <- gsub("</table>", "</table></div>", x[k])
+        } else {
+            x[i-1] = paste0(
+                '<div class="col-sm-3">'
+            )
+            k <- min(tab_close[tab_close > i])
+            x[k] <- gsub("</table>", paste0("</table><!--\n<caption>-->", cap, "</div><!--</caption>-->"), x[k])
+        }
+    }
+    return(x)
+}    

@@ -56,13 +56,13 @@ its only here while we sort out the book*/
     cursor: pointer;
 }
 
-
+/*
 .margintab {
   margin: 0;
   width: 30%;
   position: relative;
   right: 10%;
-}
+} */
 
 .MJXc-display {
   width: 55%;
@@ -237,6 +237,11 @@ li.toc {
 }
 
 /* formatting tables */
+
+table {
+    width: 100%;
+}
+
 .console {
   width: 80%;
   table-layout: fixed;

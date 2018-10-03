@@ -26,7 +26,7 @@ Both of the examples below are taken from @MSMB.
 
 We have have tables in the main body of the text, as seen below in Table \@ref(tab:main-table).  Following the **tufte** convention the caption appears alongside in the margin.
 
-```{r, main-table, echo = FALSE}
+```{r, main-table, echo = FALSE, cache = FALSE}
 d1 <- t(data.frame(
     quiet = c(2770, 2150, 2140, 875, 1220, 821, 2510),
     angry = c(2970, 1530, 1740, 752, 1040, 710, 1730),
@@ -44,13 +44,13 @@ knitr::kable(d1, caption = 'Example of table appearing in the main body of the t
 
 You can also include tables in the margin column as in Table \@ref(tab:margin-table), with the caption above.
 
-```{r, margin-table, echo = TRUE}
+```{r, margin-table, echo = TRUE, cache = FALSE}
 HIV <- data.frame(Patient = c('AHX112', 'AHX717', 'AHX543'), 
                            Mut1 = c(0, 1, 1),
                            Mut2 = c(0, 0, 0),
                            Mut3 = c(0, 1, 0),
                            '...' = rep(' ', 3))
-knitr::kable(HIV, format = 'html', table.attr = 'class=\"margintab marginnote\"',
+knitr::kable(HIV, format = 'html', table.attr = 'class=\"margintab\"',
         caption = 'An example of a table in the margin.')
 ```
 

@@ -47,8 +47,8 @@ solution <- function(text, header = "&#x25BA; Solution", toggle = TRUE, hidden =
         id2 <- paste0("sol-body-", id)
         
         part1 <- paste0(
-               "<div class = \"solution\">",
-               "<p class=\"solution-begin\">", header, 
+               "<div class='ques-sol'>",
+               "<p class='solution-begin'>", header, 
                ifelse(toggle, 
                       sprintf("<span id='%s' class=\"fa fa-plus-square solution-icon clickable\" onclick=\"toggle_visibility('%s', '%s')\"></span>", id1, id2, id1), 
                       ""),
@@ -69,10 +69,10 @@ solution <- function(text, header = "&#x25BA; Solution", toggle = TRUE, hidden =
         if(missing(text)) {
             part2 <- ""
         } else {
-            part2 <- paste0("<p>", text, "</p>",
+            part2 <- paste0("<p>", text, "</p>", "</div>",
                 "<p class=\"solution-end\">", 
                 "<span class=\"fa fa-square-o solution-icon\"></span>", "</p>",
-                "</div></div>")
+                "</div>")
         }
 
         
@@ -101,9 +101,9 @@ solution_begin <- function(header = "&#x25BA; Solution", toggle = TRUE, hidden =
 solution_end <- function() {
     if (knitr::is_html_output()) {
         
-        part2 <- paste0("<p class=\"solution-end\">", 
-                        "<span class=\"fa fa-square-o solution-icon\"></span>", "</p>",
-                        "</div>",
+        part2 <- paste0("</div>",
+                        "<span class=\"solution-end\">",   
+                        "<span class=\"fa fa-square-o solution-icon\"></span>", "</span>",
                         "</div>") 
         output <- structure(part2, format = "HTML", class = "knitr_kable")
     }
@@ -164,7 +164,7 @@ question <- function(text, header = "&#x25BA; Question", label = NULL) {
         label <- ifelse(is.null(label), "", label)
     
         part1 <- paste0(
-            sprintf("<div class='question' id='%s'>", label),
+            sprintf("<div class='ques-sol' id='%s'>", label),
             "<span class='question-begin'>", header, "</span>",
             "<div class='question-body'>")
         
