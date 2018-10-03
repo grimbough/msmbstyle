@@ -164,16 +164,16 @@ question <- function(text, header = "&#x25BA; Question", label = NULL) {
         label <- ifelse(is.null(label), "", label)
     
         part1 <- paste0(
-            sprintf("<div class = 'question' id='%s'>", label),
-            "<p class='question-begin'>", header, "</p>",
+            sprintf("<div class='question' id='%s'>", label),
+            "<span class='question-begin'>", header, "</span>",
             "<div class='question-body'>")
         
         if(missing(text)) {
             part2 <- ""
         } else {
-            part2 <- paste0("<p>", text, "</p>",
-                "<p class='question-end'>", "<span class='fa fa-square-o solution-icon'></span>", "</p>",
-                "</div></div>")
+            part2 <- paste0("", text, "", "</div>",
+                "<span class='question-end'>", "<span class='fa fa-square-o solution-icon'></span>", "</span>",
+                "</div>")
         }
 
         ## reuse the knitr_kable structure to ensure it is included in the document
@@ -204,9 +204,10 @@ question_begin <- function(header = "&#x25BA; Question", label = NULL) {
 question_end <- function() {
     
     if (knitr::is_html_output()) {
-        part2 <- paste0("<p class=\"question-end\">", 
-                        "<span class=\"fa fa-square-o solution-icon\"></span>", "</p>",
-                        "</div></div>") 
+        part2 <- paste0("</div>",
+                        "<span class=\"question-end\">", 
+                        "<span class=\"fa fa-square-o solution-icon\"></span>", "</span>",
+                        "</div>") 
         output <- structure(part2, format = "HTML", class = "knitr_kable")
     }
     

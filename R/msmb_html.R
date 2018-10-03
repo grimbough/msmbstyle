@@ -37,6 +37,7 @@ msmb_html = function(
     rmarkdown::html_document(
       ..., extra_dependencies = c(
         extra_dependencies, 
+        list(bookdown:::jquery_dependency()),
         tufte_html_dependency(tufte_features, tufte_variant), 
         msmb_html_dependency()
       )
@@ -128,6 +129,9 @@ msmb_html = function(
     
     x = .add_meta_tags(x, md_file = input)
     x = .toc_2_navbar(x, md_file = input)
+    x = .catch_sourceCode(x) %>%
+        .catch_questions() %>%
+        .clean_columns()
 
     xfun::write_utf8(x, output)
     output
@@ -167,11 +171,19 @@ msmb_html = function(
       
       res <- x
       ## we only want to add a row if this isn't margin content
-      if(!stringr::str_detect(options$engine, "marginfigure"))
-        res <- paste0('<div class="row test">', res, '</div>')
+      if(!stringr::str_detect(options$engine, "marginfigure")) {
+        res <- paste0("<div class='row test'>", res)
+        if(str_detect(res, "<div class='question'")) {
+            ## close chunk row before starting question
+            res <- gsub_fixed("<div class='question'", "</div><div class='question'", x = res)
+        } else {
+            res <- paste0(res, '</div>')
+        }
+      }
       
       chunk_marks <- stringr::str_locate_all(res, "```")[[1]]
       
+      ## margin figures come before code, so this column is shifted left
       col_div <- ifelse(isTRUE(options$fig.margin),
                         '<div class="col-sm-9 col-sm-pull-3">\n```',
                         '<div class="col-sm-9">\n```')
@@ -196,15 +208,6 @@ msmb_html = function(
       
   })
 
-  
-  # knitr::knit_engines$set(marginfigure = function(options) {
-  #   options$type = 'marginnote'
-  #   if (is.null(options$html.tag)) options$html.tag = 'span'
-  #   options$html.before = tufte:::marginnote_html()
-  #   eng_block = knitr::knit_engines$get('block')
-  #   eng_block(options)
-  # })
-
   format$inherits = 'html_document'
 
   format
@@ -226,7 +229,7 @@ tufte_html_dependency = function(features, variant) {
 
 #' @importFrom htmltools htmlDependency
 msmb_html_dependency = function() {
-    list(bookdown:::jquery_dependency(),
+    list(#bookdown:::jquery_dependency(),
          htmlDependency('msmb-css', version = '0',
                         src = template_resources('msmb_html', package = 'msmbstyle'), 
                         stylesheet = 'msmb.css')
@@ -236,25 +239,21 @@ msmb_html_dependency = function() {
 ## Identifies any <h2> headings in the output HTML (equivalent to a section)
 ## Builds a table of contents for the current page based on these
 ## that will be included in the drop-down navigation
-#' @importFrom stringr str_detect str_match
+#' @importFrom stringr str_detect str_match str_trim
+#' @importFrom xml2 xml_text xml_find_all
 .create_section_links <- function(html_lines, include_nums = TRUE) {
     
-    section_names <- html_lines[str_detect(html_lines, '<h2>')] %>%
-        str_match('>([0-9.]+)</span>(.*)</h2>') 
-    ## we have to treat the intro page differently as it is unnumbered
-    if(all(is.na(section_names))) {
-        section_names <- html_lines[str_detect(html_lines, '<h2>')] %>% 
-            str_match('>([0-9.]*)(.*)</h2>')
-    }
+    html <- xml2::read_html(paste(html_lines, collapse="\n"))
     
-    if(!nrow(section_names)) {
+    section_nodes <- xml2::xml_find_all(html, xpath = "//h2")
+    if(!length(section_nodes)) {
         return(NULL)
     }
     
-    if(include_nums)
-        section_names <- paste0(section_names[,2], section_names[,3])
-    else 
-        section_names <- section_names[,3]
+    section_names <- xml_text(section_nodes) %>% 
+        str_trim()
+    if(!include_nums)
+        section_names <- stringr::str_remove(string = section_names, "^[0-9\\.]+ ")
     
     section_links <- html_lines[str_detect(html_lines, 'class="section level2')] %>%
         str_match(pattern = 'id="([[:alnum:]-:]+)"')
@@ -284,13 +283,55 @@ msmb_html_dependency = function() {
         stringr::str_replace_all('</h2>', '</h2></div>\n</div>') %>%
         stringr::str_replace('<p([> ])', '<div class="row">\n<div class="col-sm-9"><p\\1') %>%
         stringr::str_replace('</p>', '</p></div>\n</div>') %>%
-       # stringr::str_replace('<div class="sourceCode', '<div class="col-sm-9 sourceCode>') #%>%
-       # stringr::str_replace('</code></pre></div>', '</code></pre></div></div>') 
         stringr::str_replace_all('<div class="row">\n<div class="col-sm-9"><p>(<img [[:print:]]+)</p></div>\n</div>',
                                  '<p>\\1</p>')
     
     return(x)
     
+}
+
+.catch_sourceCode <- function(x) {
+    
+    html <- paste0(x, collapse = "\n") %>%
+        read_html()
+    code_nodes <- xml2::xml_find_all(html, xpath = "//div[starts-with(@class, 'sourceCode')]")
+    for(i in seq_along(code_nodes)) {
+        node <- code_nodes[i]
+        if( !grepl(pattern = 'col-sm-', x = xml_attrs(xml_parent(node)) ) ) {
+            xml_add_parent(node, "div", class = "row") 
+            xml_add_parent(node, "div", class = "col-sm-9") 
+        }
+    }
+    stringr::str_split(as.character(html), pattern = "\n")[[1]]
+}
+
+.catch_questions <- function(x) {
+    
+    html <- paste0(x, collapse = "\n") %>%
+        read_html()
+    code_nodes <- xml2::xml_find_all(html, xpath = "//span[starts-with(@class, 'question-')]")
+    for(i in seq_along(code_nodes)) {
+        node <- code_nodes[i]
+        if( !grepl(pattern = 'col-sm-', x = xml_attrs(xml_parent(node)) ) ) {
+            xml_add_parent(node, "div", class = "row") 
+            xml_add_parent(node, "div", class = "col-sm-9") 
+        }
+    }
+    stringr::str_split(as.character(html), pattern = "\n")[[1]]
+}
+
+.clean_columns <- function(x) {
+    
+    html <- paste0(x, collapse = "\n") %>%
+        read_html()
+    col_nodes <- xml2::xml_find_all(html, xpath = "//div[starts-with(@class, 'col')]")
+    for(i in seq_along(col_nodes)) {
+        node <- col_nodes[i]
+        if( any(grepl(pattern = 'col-sm-9', x = xml_attrs(xml_parents(node)) )) ) {
+            xml2::xml_set_attr(node, 'class', 'col-sm-12')
+        }
+    }
+    stringr::str_split(as.character(html), pattern = "\n")[[1]]
 }
 
 ## Converts the table of contents HTML produced by bookdown into
@@ -357,7 +398,7 @@ msmb_build_chapter = function(
 ) {
     
     ## insert script for solution toggle
-    ## we put it after the msmb.css as this should always be present
+    ## we put it before the msmb.css & after jQuery
     msmb_css_line <- max(str_which(head, "msmb.css\""))
     head[msmb_css_line] <- paste(toggle_script(), head[msmb_css_line], sep = "\n")
 
@@ -415,7 +456,7 @@ msmb_build_chapter = function(
     question_divs <- stringr::str_which(chapter, "id=\"ques:")
     if(!length(question_divs)) { return(chapter) }
     ## for now assume there are always two lines between these
-    question_heads <- question_divs + 2
+    question_heads <- question_divs + 1
     
     chapter[question_heads] <- mapply(FUN = function(x, y, chapter, chap_num) { 
         paste0(chapter[x], " ", chap_num, ".", y) }, 
@@ -535,4 +576,5 @@ margin_note <- function(text) {
     sprintf('<!--MOVE<div class=col-sm-3>%s</div>EVOM-->', text)
     
 }
+
     

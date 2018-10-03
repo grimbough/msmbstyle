@@ -30,7 +30,7 @@ In teaching material it is common to want to include questions (and possibly sol
 
 If your question is simply a paragraph of text, you can use `msmbstyle::question()` and provide the paragraph via the argument `text`.  We see an example of this approach below. `r msmbstyle::margin_note('The code is shown here, but it would be more typical to hide it via \x60echo = FALSE\x60')`
 
-```{r, simple-question} 
+```{r, simple-question, cache = FALSE} 
 msmbstyle::question(text = "Is this question displaying correctly?")
 ```
 
