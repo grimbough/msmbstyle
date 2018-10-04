@@ -121,8 +121,9 @@ msmb_html = function(
     x = .toc_2_navbar(x, md_file = input)
     x = .catch_sourceCode(x) %>%
         .catch_questions() %>%
-        .clean_columns() %>% 
-        .apply_rows2()
+        .apply_rows2() %>%
+        .clean_columns()
+
 
     xfun::write_utf8(x, output)
     output
@@ -274,8 +275,8 @@ msmb_html_dependency = function() {
         stringr::str_replace_all('</h1>', '</h1></div>\n</div>') %>%
         stringr::str_replace_all('<h2>', '<div class="row">\n<div class="col-sm-9"><h2>') %>%
         stringr::str_replace_all('</h2>', '</h2></div>\n</div>') %>%
-        stringr::str_replace('<p([> ])', '<div class="row">\n<div class="col-sm-9"><p\\1') %>%
-        stringr::str_replace('</p>', '</p></div>\n</div>') %>%
+       # stringr::str_replace('<p([> ])', '<div class="row">\n<div class="col-sm-9"><p\\1') %>%
+        #stringr::str_replace('</p>', '</p></div>\n</div>') %>%
         stringr::str_replace_all('<div class="row">\n<div class="col-sm-9"><p>(<img [[:print:]]+)</p></div>\n</div>',
                                  '<p>\\1</p>')
     
@@ -283,11 +284,12 @@ msmb_html_dependency = function() {
     
 }
 
+#' @importFrom xml2 xml_find_all xml_has_attr xml_attrs xml_add_parent xml_parent
 .apply_rows2 <- function(x) {
     
     html <- paste0(x, collapse = "\n") %>%
         read_html()
-    nodes <- xml2::xml_find_all(html, xpath = "//table")
+    nodes <- xml2::xml_find_all(html, xpath = "//table|//p")
     for(i in seq_along(nodes)) {
         node <- nodes[i]
         if( !xml_has_attr(node, "class") && 
@@ -329,6 +331,8 @@ msmb_html_dependency = function() {
     stringr::str_split(as.character(html), pattern = "\n")[[1]]
 }
 
+#' @importFrom xml2 xml_parents xml_attrs xml_set_attr xml_add_child xml_remove xml_parent
+#' @importFrom stringr str_remove
 .clean_columns <- function(x) {
     
     html <- paste0(x, collapse = "\n") %>%
@@ -340,6 +344,28 @@ msmb_html_dependency = function() {
             xml2::xml_set_attr(node, 'class', 'col-sm-12')
         }
     }
+    
+    ## items can be in the margin with no content next to it e.g. 
+    ## code with echo=FALSE. Here we move this content to the row above
+    margin_nodes <- xml_find_all(html, xpath = "//div[contains(@class, 'col-sm-3')]")
+    for(i in seq_along(margin_nodes)) {
+        node <- margin_nodes[i]
+        is_siblings <- any(unlist(lapply(xml_attrs(xml_siblings(node)), 
+                                  grepl, pattern = "col-sm-9")))
+        ## if there is a col-sm-9 sibling thats ok
+        ## move our node if it is an only child
+        if(!is_siblings) {
+            parent <- xml_parent(node)
+            uncle <- rev(xml_find_all(parent, "preceding-sibling::*"))[1]
+            #where <- ifelse(str_detect(xml_attrs(node), "col-sm-push-[0-9]+"),
+            #                0, length(xml_children(uncle)))
+            xml_set_attr(node, 'class', 
+                         str_remove(xml_attr(node, 'class'), " ?col-sm-push-[0-9]+"))
+            xml_add_child(uncle, node)
+            xml_remove(parent)
+        }
+    }
+    
     stringr::str_split(as.character(html), pattern = "\n")[[1]]
 }
 

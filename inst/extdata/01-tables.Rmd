@@ -37,7 +37,7 @@ d1 <- t(data.frame(
     perplexed = c(110,  71,  80,  19,  23,  15, 109),
     virtuous = c(179,  80, 102,  20,  25,  17, 165)))
 colnames(d1) <- c('black','blue','green','grey','orange','purple','white')
-knitr::kable(d1, caption = 'Example of table appearing in the main body of the text.')
+knitr::kable(d1, caption = 'Example of table appearing in the main body of the text.', align = "l")
 ```
 
 ## Margin tables
@@ -51,7 +51,21 @@ HIV <- data.frame(Patient = c('AHX112', 'AHX717', 'AHX543'),
                            Mut3 = c(0, 1, 0),
                            '...' = rep(' ', 3))
 knitr::kable(HIV, format = 'html', table.attr = 'class=\"margintab\"',
-        caption = 'An example of a table in the margin.')
+        caption = 'An example of a table in the margin.') 
 ```
 
 To achieve this we use the `kable()` function to produce the an HTML table with the attributes `margintab` & `marginnote`.  **msmbstyle** then provides the CSS required to place this table in the margin.
+
+## Margin tables more
+
+You can also include tables in the margin column as in Table \@ref(tab:margin-table), with the caption above.
+
+```{r, margin-table-2, echo = FALSE, cache = FALSE}
+HIV <- data.frame(Patient = c('AHX112', 'AHX717', 'AHX543'), 
+                           Mut1 = c(0, 1, 1),
+                           Mut2 = c(0, 0, 0),
+                           Mut3 = c(0, 1, 0),
+                           '...' = rep(' ', 3))
+knitr::kable(HIV, format = 'html', table.attr = 'class=\"margintab\"',
+        caption = 'An example of a table in the margin.') 
+```
