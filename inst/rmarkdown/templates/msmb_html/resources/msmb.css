@@ -11,10 +11,12 @@ body {
 }
 
 .title {
+    color: #ccc;
     font-size: 2.5rem;
 }
 
 .author {
+    color: #ccc;
     font-size: 1.5rem;
     padding-top: 10px;
 }
@@ -179,13 +181,14 @@ when window exceeds 1615px */
 .dropdown:hover .dropdown-content {
     display: block;
 }
+*/
 
 .dropdown a:link {
     background-position-y: 0;
     text-shadow: none;
     background-size: 0;
 } 
-*/
+
 
 /* BEGIN: chapter navigation dropdown */
 
@@ -308,6 +311,7 @@ div.toc-section {
   }
 }
 
+/*
 @media (max-width: 760px) {
     body {
         padding-left: 0;
@@ -349,12 +353,13 @@ div.toc-section {
         max-width: 100%;
     }
 
-}
+} */
 
 
 .navbar-default {
   background-color: #1881c2;
   border-color: #026cae;
+  font-size: 1.5rem;
 }
 .navbar-default .navbar-brand {
   color: #ecf0f1;

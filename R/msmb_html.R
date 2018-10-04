@@ -234,7 +234,7 @@ msmb_html_dependency = function() {
 ## that will be included in the drop-down navigation
 #' @importFrom stringr str_detect str_match str_trim
 #' @importFrom xml2 xml_text xml_find_all
-.create_section_links <- function(html_lines, include_nums = TRUE) {
+.create_section_links <- function(html_lines, include_nums = TRUE, target = "panel") {
     
     html <- xml2::read_html(paste(html_lines, collapse="\n"))
     
@@ -256,12 +256,18 @@ msmb_html_dependency = function() {
     if(length(section_names) != length(section_links)) 
         stop('Not same length')
     
-    tmp <- c('<div class="panel panel-default toc-section">',
-               '<div class="panel-heading">Chapter Navigation</div>',
-               '<div class="section-link list-group">',
+    if(target == "panel") {
+        tmp <- c('<div class="panel panel-default toc-section">',
+                 '<div class="panel-heading">Chapter Navigation</div>',
+                 '<div class="section-link list-group">',
                  paste0('<a class="list-group-item" href="#', section_links, '">', section_names, '</a>'),
-               '</div>',
-             '</div>')
+                 '</div>',
+                 '</div>')
+    } else if (target == "navbar") {
+        tmp <- paste0('<li><a href="#', section_links, '">', section_names, '</a></li>')
+    } else {
+        stop("Unknown target")
+    }
     
     return(paste(tmp, collapse = '\n'))
     
@@ -365,6 +371,7 @@ msmb_html_dependency = function() {
     toc_end <- min(which(str_detect(x, '</ul>')))
 
     chapter_links <- x[(toc_start+1):(toc_end-1)]
+    #section_links <- .create_section_links(x, target = "navbar")
     
     x[toc_start:toc_end] <- ''
     x[toc_start] <- paste(c('<nav class="navbar navbar-default">
@@ -382,16 +389,24 @@ msmb_html_dependency = function() {
         
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav hidden-xs">
         <!-- title and authors -->',
                             title_and_author,
         '</ul>
         <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
+        <li class="dropdown" style="float: right;">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Chapters <span class="caret"></span></a>
         <ul class="dropdown-menu">
             <!-- links to chapters here -->',
                            chapter_links,
+        '</ul>
+        </li>
+
+        <li class="dropdown hidden-md hidden-lg">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sections <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <!-- links to sections here -->',
+                            #section_links,
         '</ul>
         </li>
         </ul>
@@ -410,12 +425,15 @@ msmb_build_chapter = function(
     ## we put it before the msmb.css & after jQuery
     msmb_css_line <- max(str_which(head, "msmb.css\""))
     head[msmb_css_line] <- paste(toggle_script(), head[msmb_css_line], sep = "\n")
-
-    #toc = str_replace_all(toc, 
-    #                      pattern = 'href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 
-    #                      replacement = 'href="\\1')
     
-    chapter_nav <- .create_section_links(chapter, include_nums = FALSE)
+    chapter_nav <- .create_section_links(chapter, include_nums = TRUE, target = "navbar")
+    chapter_sidebar <- .create_section_links(chapter, include_nums = TRUE, target = "panel")
+    
+    toc = str_replace_all(toc, 
+                          pattern = 'href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 
+                          replacement = 'href="\\1')
+    
+    toc <- str_replace(toc, "<!-- links to sections here -->", chapter_nav)
     
     chapter <- .apply_rows(chapter) %>%
         .put_marginfig_in_row() %>%
@@ -433,8 +451,8 @@ msmb_build_chapter = function(
         '</div>',
         '<div class="container chapter-content">',
           '<div class="row">',
-            '<div class="hidden-sm col-md-2">',
-              chapter_nav,
+            '<div class="hidden-xs hidden-sm col-md-2">',
+              chapter_sidebar,
             '</div>',
             '<div class="col-xs-12 col-md-10">',
               chapter_body,
