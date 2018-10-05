@@ -53,7 +53,9 @@ bibliography: msmbstyle-ex.bib
 
 Currently it is mandatory to set `toc: TRUE` and `toc_depth: 1`.  Changing the first value will remove the list of chapters entirely which breaks the document navigation, and similarly setting the second to any other value will confuse the code that creates the drop-down navigation menu.  This will hopefully be made more configurable/robust in the future.  `split_by: chapter` is not mandatory, removing this will still prodoce a viable set of HTML pages, but the navigation will only allow you to move between the first page of each chapter.
 
-`split_bib: no` and `margin_references: FALSE` are used to place the references in the final chapter of the book, and are used here as that was the format used in @MSMB.  It seems to work fine to change these if that is your preference.  You can then produce the HTML documents either via calling the function `bookdown::render_book()`.   `r msmbstyle::margin_note('Alternatively, pressing the "Knit" button in an R Studio session will render only the chapter you are currently working on.  This is as a result of the \x60knit: "bookdown::preview_chapter"\x60 entry in the YAML header.')`
+`split_bib: no` and `margin_references: FALSE` are used to place the references in the final chapter of the book, and are used here as that was the format used in @MSMB.  It seems to work fine to change these if that is your preference.  You can then produce the HTML documents either via calling the function `bookdown::render_book()`.   
+
+`r msmbstyle::margin_note('Alternatively, pressing the "Knit" button in an R Studio session will render only the chapter you are currently working on.  This is as a result of the \x60knit: "bookdown::preview_chapter"\x60 entry in the YAML header.')`
 
 The example below gives a (slightly convoluted) example of how to build this website from R Markdown files distributed with the package.
 

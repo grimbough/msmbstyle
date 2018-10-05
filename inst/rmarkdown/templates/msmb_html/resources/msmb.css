@@ -259,6 +259,8 @@ table {
 
 .code {
     font-size: 0.9em;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
 }
 
 code.r {

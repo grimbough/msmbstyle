@@ -48,11 +48,11 @@ solution <- function(text, header = "&#x25BA; Solution", toggle = TRUE, hidden =
         
         part1 <- paste0(
                "<div class='ques-sol'>",
-               "<p class='solution-begin'>", header, 
+               "<span class='solution-begin'>", header, 
                ifelse(toggle, 
                       sprintf("<span id='%s' class=\"fa fa-plus-square solution-icon clickable\" onclick=\"toggle_visibility('%s', '%s')\"></span>", id1, id2, id1), 
                       ""),
-               "</p>",
+               "</span>",
                ifelse(toggle,
                       paste0("<div class=\"solution-body\" id = \"", id2,"\" style=\"display: none;\">"),
                       "<div class=\"solution-body\">")
@@ -70,8 +70,8 @@ solution <- function(text, header = "&#x25BA; Solution", toggle = TRUE, hidden =
             part2 <- ""
         } else {
             part2 <- paste0("<p>", text, "</p>", "</div>",
-                "<p class=\"solution-end\">", 
-                "<span class=\"fa fa-square-o solution-icon\"></span>", "</p>",
+                "<span class=\"solution-end\">", 
+                "<span class=\"fa fa-square-o solution-icon\"></span>", "</span>",
                 "</div>")
         }
 

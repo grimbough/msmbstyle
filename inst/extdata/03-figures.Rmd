@@ -45,7 +45,7 @@ Note the use of the `fig.cap` chunk option to provide a figure caption. You can 
 
 In fact, you can include anything in the margin using the **knitr** engine named `marginfigure`. Unlike R code chunks ```` ```{r} ````, you write a chunk starting with ```` ```{marginfigure} ```` instead, then put the content in the chunk. See an example on the right about the first fundamental theorem of calculus.
 
-```{marginfigure2}
+```{marginfigure, echo = TRUE}
 We know from _the first fundamental theorem of calculus_ that for $x$ in $[a, b]$:
 $$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$
 ```

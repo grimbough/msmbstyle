@@ -152,7 +152,7 @@ msmb_html = function(
       res = gsub_fixed('<div class="figure">', '<div class="figure col-sm-12">', res)
       res = gsub_fixed('<p class="caption">', '<p class="caption marginnote">', res)
     } else { ## normal figures
-        res = gsub_fixed('<div class="figure">', '<div class="row figure"><div class="col-sm-9">', res) 
+        res = gsub_fixed('<div class="figure">', '<div class="col-sm-9">', res) 
         res = gsub_fixed('<p class="caption">', '</div>\n<div class="caption col-sm-3">', res)
         res = gsub_fixed('</p>', '</div>', res)
     }
@@ -192,13 +192,13 @@ msmb_html = function(
   }
 
   ## engine for placing arbitrary content in the margin
-  knitr::knit_engines$set(marginfigure2 = function(options) {
+  knitr::knit_engines$set(marginfigure = function(options) {
       options$type = 'col-sm-3 margin2'
       if (is.null(options$html.tag)) options$html.tag = 'div'
       eng_block = knitr::knit_engines$get('block')
       eng_block(options) %>%
           stringr::str_replace_all('<(/?)p>', '<\\1div>') %>%
-          paste0('</div>') ## we add a tag that closes a row defined elsewhere
+          paste('<div class="row">', . , '</div>', sep = "\n") ## we add a tag that closes a row defined elsewhere
       
   })
 
@@ -277,12 +277,12 @@ msmb_html_dependency = function() {
 .apply_rows <- function(x) {
     
     x <- x %>%
-        stringr::str_replace_all('<h1>', '<div class="row">\n<div class="col-sm-9"><h1>') %>%
-        stringr::str_replace_all('</h1>', '</h1></div>\n</div>') %>%
-        stringr::str_replace_all('<h2>', '<div class="row">\n<div class="col-sm-9"><h2>') %>%
-        stringr::str_replace_all('</h2>', '</h2></div>\n</div>') %>%
+       # stringr::str_replace_all('<h1>', '<div class="row">\n<div class="col-sm-9"><h1>') %>%
+       # stringr::str_replace_all('</h1>', '</h1></div>\n</div>') %>%
+       # stringr::str_replace_all('<h2>', '<div class="row">\n<div class="col-sm-9"><h2>') %>%
+       # stringr::str_replace_all('</h2>', '</h2></div>\n</div>') %>%
        # stringr::str_replace('<p([> ])', '<div class="row">\n<div class="col-sm-9"><p\\1') %>%
-        #stringr::str_replace('</p>', '</p></div>\n</div>') %>%
+       # stringr::str_replace('</p>', '</p></div>\n</div>') %>%
         stringr::str_replace_all('<div class="row">\n<div class="col-sm-9"><p>(<img [[:print:]]+)</p></div>\n</div>',
                                  '<p>\\1</p>')
     
@@ -295,7 +295,7 @@ msmb_html_dependency = function() {
     
     html <- paste0(x, collapse = "\n") %>%
         read_html()
-    nodes <- xml2::xml_find_all(html, xpath = "//table|//p")
+    nodes <- xml2::xml_find_all(html, xpath = "//table|//p|//h1|//h2|//h3|//h4")
     for(i in seq_along(nodes)) {
         node <- nodes[i]
         if( !xml_has_attr(node, "class") && 
@@ -337,7 +337,7 @@ msmb_html_dependency = function() {
     stringr::str_split(as.character(html), pattern = "\n")[[1]]
 }
 
-#' @importFrom xml2 xml_parents xml_attrs xml_set_attr xml_add_child xml_remove xml_parent
+#' @import xml2
 #' @importFrom stringr str_remove
 .clean_columns <- function(x) {
     
@@ -356,11 +356,11 @@ msmb_html_dependency = function() {
     margin_nodes <- xml_find_all(html, xpath = "//div[contains(@class, 'col-sm-3')]")
     for(i in seq_along(margin_nodes)) {
         node <- margin_nodes[i]
-        is_siblings <- any(unlist(lapply(xml_attrs(xml_siblings(node)), 
+        has_siblings <- any(unlist(lapply(xml_attrs(xml_siblings(node)), 
                                   grepl, pattern = "col-sm-9")))
         ## if there is a col-sm-9 sibling thats ok
         ## move our node if it is an only child
-        if(!is_siblings) {
+        if(!has_siblings) {
             parent <- xml_parent(node)
             uncle <- rev(xml_find_all(parent, "preceding-sibling::*"))[1]
             #where <- ifelse(str_detect(xml_attrs(node), "col-sm-push-[0-9]+"),
@@ -459,11 +459,12 @@ msmb_build_chapter = function(
                           pattern = 'href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 
                           replacement = 'href="\\1')
     
-    toc <- str_replace(toc, "<!-- links to sections here -->", chapter_nav)
+    if(!is.null(chapter_nav)) 
+        toc <- str_replace(toc, "<!-- links to sections here -->", chapter_nav)
     
     chapter <- .apply_rows(chapter) %>%
-        .put_marginfig_in_row() %>%
-        .move_margin_notes()
+        .put_marginfig_in_row() #%>%
+        #.move_margin_notes()
     chapter <- .number_questions(chapter)
     chapter_body <- .nonumber_chap_figs(chapter)
     
@@ -595,10 +596,10 @@ msmb_build_chapter = function(
 ## and remove the </div> above it, we have already provided a replacement
 .put_marginfig_in_row <- function(x) {
     
-    idx <- str_which(x, '<div class="col-sm-3 margin2">')
-    if(length(idx)) {
-        x[idx-1] <- stringr::str_remove(x[idx-1], '</div>$')
-    }
+#    idx <- str_which(x, '<div class="col-sm-3 margin2">')
+#    if(length(idx)) {
+#        x[idx-1] <- stringr::str_remove(x[idx-1], '</div>$')
+#    }
     x
 }
 
@@ -626,12 +627,12 @@ msmb_build_chapter = function(
 #' @export
 margin_note <- function(text) {
     
-    sprintf('<!--MOVE<div class=col-sm-3>%s</div>EVOM-->', text)
+    sprintf('<div class="row"><div class=col-sm-3>%s</div></div>', text)
     
 }
 
 ## for main body tables, we place the caption in the margin.
-## for tables with 'margintab' as a class we put both the table
+## for tables with class='margintab' we put both the table
 ## and caption in the margin.
 .arrange_tables <- function(x) {
     
