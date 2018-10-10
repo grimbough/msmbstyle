@@ -150,7 +150,7 @@ msmb_html = function(
         # }
     } else if (fig_fullwd) {
       res = gsub_fixed('<div class="figure">', '<div class="figure col-sm-12">', res)
-      res = gsub_fixed('<p class="caption">', '<p class="caption marginnote">', res)
+      res = gsub_fixed('<p class="caption">', '<p class="caption col-sm-3 col-sm-push-9">', res)
     } else { ## normal figures
         res = gsub_fixed('<div class="figure">', '<div class="col-sm-9">', res) 
         res = gsub_fixed('<p class="caption">', '</div>\n<div class="caption col-sm-3">', res)
@@ -420,7 +420,7 @@ msmb_html_dependency = function() {
                             title_and_author,
         '</ul>
         <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown" style="float: right;">
+        <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Chapters <span class="caret"></span></a>
         <ul class="dropdown-menu">
             <!-- links to chapters here -->',
@@ -471,7 +471,7 @@ msmb_build_chapter = function(
     
     paste(c(
         head,
-        '<div class="container navbar-fixed-top msmb-header">',
+        '<div class="navbar-fixed-top msmb-header">',
           '<div class="row">',
               toc,
           '</div>',
@@ -499,7 +499,7 @@ msmb_build_chapter = function(
     ), collapse = '\n')
 }
 
-#' @importFrom stringr str_match_all str_which
+#' @importFrom stringr str_match_all str_which str_replace
 #' @importFrom magrittr extract
 .number_questions <- function(chapter) {
     
@@ -513,7 +513,7 @@ msmb_build_chapter = function(
     question_heads <- question_divs + 1
     
     chapter[question_heads] <- mapply(FUN = function(x, y, chapter, chap_num) { 
-        paste0(chapter[x], " ", chap_num, ".", y) }, 
+        str_replace(chapter[x], "</span>", paste0(" ", chap_num, ".", y, "</span>")) },
         question_heads, seq_along(question_heads),
         MoreArgs = list(chapter = chapter, chap_num = chap_num))
     
@@ -627,7 +627,10 @@ msmb_build_chapter = function(
 #' @export
 margin_note <- function(text) {
     
-    sprintf('<div class="row"><div class=col-sm-3>%s</div></div>', text)
+    paste0('<div class="row"><div class=col-sm-3 margin-note>',
+          '<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> ',
+          text,
+          '</div></div>')
     
 }
 
