@@ -43,6 +43,21 @@ if(f.classList.contains('fa-plus-square')) {
 
 }
 </script>",
+'<script>
+var prevScrollpos = window.pageYOffset;
+window.onscroll = function() {
+    if ($(window).width() < 768) {
+        var currentScrollPos = window.pageYOffset;
+        if (prevScrollpos > currentScrollPos) {
+            document.getElementById("navbar").style.top = "0";
+        } else {
+            document.getElementById("navbar").style.top = "-50px";
+        }
+        prevScrollpos = currentScrollPos;
+    }
+}
+</script>',
+#'<script>$("#mySidenav").BootSideMenu({pushBody:false, width:"25%"});</script>',
 #'<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>',
 '<!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">

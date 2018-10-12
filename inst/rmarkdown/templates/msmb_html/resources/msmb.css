@@ -10,9 +10,17 @@ body {
   padding-top: 50px;
 }
 
-.title, .title-collapsed {
+.title {
     color: #f5f8f9;
     font-size: 2.5rem;
+}
+
+.title-collapsed {
+    color: #f5f8f9;
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-size: 2.4rem;
 }
 
 .author {
@@ -67,7 +75,6 @@ its only here while we sort out the book*/
 } */
 
 .MJXc-display {
-  width: 55%;
   font-size: 1.1rem;
 }
 
@@ -107,10 +114,17 @@ li p {
   margin-bottom: 0;
 }
 
+/*** Figures and captions ***/
+
 div.figure {
     max-width: 100%;
     margin: 0;
 }
+
+.caption {
+    margin-bottom: 0.5rem;
+}
+
 
 /* header bar */
 
@@ -121,7 +135,6 @@ div.figure {
 }
 
 .msmb-header {
-    height: 6.2rem;
     background: #2395db;
 }
 
@@ -200,29 +213,45 @@ when window exceeds 1615px */
 
 /* within chapter navigation */
 
-.toc-sections {
-    margin-top: 40px;
-    border: 1px solid #ccc;
-    list-style-type: none;
-    position: fixed;
-    overflow: auto;
-    border-radius: 3px;
-    padding-inline-start: 10px;
-    padding-inline-end: 10px;
-    width: 14%;
+div.toc-section {
+  position: fixed;
+  width: 15%;
+  max-width: 175px;
+  max-height: 85%;
+  border: 1px solid #ccc;
+  margin-top: 30px;
 }
 
-.toc-sections-slide {
-    margin-top: 40px;
+.toc-section-slide {
+    max-height: 85%;
     border: 1px solid #ccc;
-    list-style-type: none;
-    position: fixed;
-    overflow: auto;
-    border-radius: 3px;
-    padding-inline-start: 10px;
-    padding-inline-end: 10px;
-    width: 14%;
+    /*margin-top: 30px;*/
+    border-radius: 0
 }
+
+.menu-wrapper {    
+    height: -webkit-fill-available;
+}
+
+#mySidenav {
+    margin-top: 30px;
+    top: inherit;
+    bottom: inherit;
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  div.toc-section {
+    max-width: 155px ;
+  }
+}
+
+@media (max-width: 991px) {
+  div.toc-section {
+    visibility: none;
+  }
+}
+
+
 
 .section-link {
     width: auto;
@@ -258,10 +287,13 @@ table {
   table-layout: fixed;
 }
 
+/********************/
+
+/* Code blocks */
+
 .code {
     font-size: 0.9em;
-    white-space: pre-wrap;
-    white-space: -moz-pre-wrap;
+    white-space: pre;
 }
 
 code.r {
@@ -282,9 +314,23 @@ pre.sourceCode {
 }
 
 pre {
-    width: auto;
+    width: auto; 
+}    
+
+pre > code {
+    white-space: pre;
 }
 
+/***************************/
+
+/*** Margin notes ***/
+
+.margin-note, .side-note {
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+}
+
+/*************************/
 
 .build-date {
   font-size: 0.8em;
@@ -292,71 +338,10 @@ pre {
 }
 
 
-div.toc-section {
-  position: fixed;
-  width: 15%;
-  max-width: 175px;
-  max-height: 85%;
-  border: 1px solid #ccc;
-  margin-top: 30px;
+
+#navbar {
+    transition: 0.3s;
 }
-
-@media (min-width: 992px) and (max-width: 1200px) {
-  div.toc-section {
-    max-width: 155px ;
-  }
-}
-
-@media (max-width: 991px) {
-  div.toc-section {
-    visibility: none;
-  }
-}
-
-/*
-@media (max-width: 760px) {
-    body {
-        padding-left: 0;
-        margin-left: 2%;
-        margin-right: 2%;
-        width: auto;
-    }
-    p {
-        width: auto;
-        font-size: 1.2em;
-    }
-    .marginnote, .sidenote {
-        left: 0;
-    }
-    .sourceCode {
-        display: inline-block;
-        width: 90%;
-    }
-    .title, .author, .dropdown {
-        text-align: center;
-    }
-    .dropdown {
-        width: 100%;
-    }
-    .dropdown-content {
-        position: inherit;
-        width: 100%;
-    }
-    li .dropbtn {
-        padding-top: 0;
-    }
-    h1, h2, h3 {
-        width: 100%;
-    }
-    h3 {
-        display: inline-block;
-    }
-    #TOC {
-        max-width: 100%;
-    }
-
-} */
-
 
 .navbar-default {
   background-color: #2395db;

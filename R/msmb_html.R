@@ -72,21 +72,20 @@ msmb_html = function(
         '<a href="#%s%d" class="%s" id="%sref%d"><sup>%d</sup></a>',
         fn_label, i, if (pandoc2) 'footnote-ref' else 'footnoteRef', fn_label, i, i
       )
+      idx <- stringr::str_which(x, num)
       con = sprintf(paste0(
-        '<label for="tufte-sn-%d" class="margin-toggle sidenote-number">%d</label>',
-        '<input type="checkbox" id="tufte-sn-%d" class="margin-toggle">',
-        '<span class="sidenote"><span class="sidenote-number">%d</span> %s</span>'
-      ), i, i, i, i, notes[i])
+        '<label for="tufte-sn-%d" class="margin-toggle sidenote-number">%d</label>'
+        ## '<input type="checkbox" id="tufte-sn-%d" class="margin-toggle">',
+        ## '<div class="col-sm-3 sidenote"><span class="sidenote-number">%d</span> %s</div>'
+      ), i, i)
       x = gsub_fixed(num, con, x)
+      x[idx] <- paste0(x[idx], sprintf('<div class="row"><div class="col-sm-3 side-note"><span class="sidenote-number">%d</span> %s</div></div>', i, notes[i]))
     }
     # remove footnotes at the bottom
     if (length(footnotes$range)) x = x[-footnotes$range]
 
     # replace citations with margin notes
     if (margin_references) x = tufte:::margin_references(x)
-
-    # place figure captions in margin notes
-    #x[x == '<p class="caption">'] = '<p class="caption marginnote shownote">'
 
     # move </caption> to the same line as <caption>; the previous line should
     # start with <table
@@ -193,7 +192,7 @@ msmb_html = function(
 
   ## engine for placing arbitrary content in the margin
   knitr::knit_engines$set(marginfigure = function(options) {
-      options$type = 'col-sm-3 margin2'
+      options$type = 'col-sm-3 margin-note'
       if (is.null(options$html.tag)) options$html.tag = 'div'
       eng_block = knitr::knit_engines$get('block')
       eng_block(options) %>%
@@ -224,6 +223,10 @@ tufte_html_dependency = function(features, variant) {
 #' @importFrom htmltools htmlDependency
 msmb_html_dependency = function() {
     list(#bookdown:::jquery_dependency(),
+         htmlDependency('BootSideMenu', '2.0',
+                        src = template_resources('msmb_html', 'BootSideMenu', package = 'msmbstyle'),
+                        script = "BootSideMenu.js",
+                        stylesheet = "BootSideMenu.css"),
          htmlDependency('msmb-css', version = '0',
                         src = template_resources('msmb_html', package = 'msmbstyle'), 
                         stylesheet = 'msmb.css')
@@ -393,6 +396,8 @@ msmb_html_dependency = function() {
     title_and_author <- paste0('<span class="title hidden-xs">', yaml$title, '</span><br />',
           '<span class="author hidden-xs">', paste(yaml$author, collapse = ', '), '</span>')
     
+    x <- stringr::str_replace(x, '<div id="TOC"', '<div id="TOC" class="container"')
+    
     toc_start <- min(which(str_detect(x, '<ul>')))
     toc_end <- min(which(str_detect(x, '</ul>')))
 
@@ -400,8 +405,7 @@ msmb_html_dependency = function() {
     #section_links <- .create_section_links(x, target = "navbar")
     
     x[toc_start:toc_end] <- ''
-    x[toc_start] <- paste(c('<nav class="navbar navbar-default">
-        <div class="container-fluid">
+    x[toc_start] <- paste(c('<nav class="navbar-default">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -471,8 +475,8 @@ msmb_build_chapter = function(
     
     paste(c(
         head,
-        '<div class="navbar-fixed-top msmb-header">',
-          '<div class="row">',
+        '<div class="navbar-fixed-top msmb-header" id="navbar">',
+          '<div class="row-fluid">',
               toc,
           '</div>',
         '</div>',
@@ -481,6 +485,12 @@ msmb_build_chapter = function(
             '<div class="hidden-xs hidden-sm col-md-2">',
               chapter_sidebar,
             '</div>',
+            '<div class="hidden-xs hidden-md hidden-lg">',
+              '<div id="mySidenav">',
+                str_replace(chapter_sidebar, 'toc-section', 'toc-section-slide'),
+              '</div>',
+            '</div>',
+        '<script>$("#mySidenav").BootSideMenu({pushBody:false, width:"25%"});</script>',
             '<div class="col-xs-12 col-md-10">',
               chapter_body,
             '</div>',
@@ -612,7 +622,7 @@ msmb_build_chapter = function(
     
     for(i in seq_along(margin_note_idx)) {
         idx <- margin_note_idx[i]
-        margin_note_md <- stringr::str_match(x[idx], "<!--MOVE<div class=col-sm-3>(.*)</div>EVOM-->")[1,2]
+        margin_note_md <- stringr::str_match(x[idx], '<!--MOVE<div class="col-sm-3(.*)</div>EVOM-->')[1,2]
         margin_note_html <- markdown::renderMarkdown(text = margin_note_md) %>%
             stringr::str_trim()
         
@@ -627,7 +637,7 @@ msmb_build_chapter = function(
 #' @export
 margin_note <- function(text) {
     
-    paste0('<div class="row"><div class=col-sm-3 margin-note>',
+    paste0('<div class="row"><div class="col-sm-3 margin-note">',
           '<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> ',
           text,
           '</div></div>')
