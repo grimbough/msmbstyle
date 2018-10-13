@@ -431,14 +431,6 @@ msmb_html_dependency = function() {
                            chapter_links,
         '</ul>
         </li>
-
-        <li class="dropdown hidden-md hidden-lg">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sections <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <!-- links to sections here -->',
-                            #section_links,
-        '</ul>
-        </li>
         </ul>
         </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
@@ -463,8 +455,8 @@ msmb_build_chapter = function(
                           pattern = 'href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 
                           replacement = 'href="\\1')
     
-    if(!is.null(chapter_nav)) 
-        toc <- str_replace(toc, "<!-- links to sections here -->", chapter_nav)
+    #if(!is.null(chapter_nav)) 
+    #    toc <- str_replace(toc, "<!-- links to sections here -->", chapter_nav)
     
     chapter <- .apply_rows(chapter) %>%
         .put_marginfig_in_row() #%>%
@@ -490,7 +482,7 @@ msmb_build_chapter = function(
                 str_replace(chapter_sidebar, 'toc-section', 'toc-section-slide'),
               '</div>',
             '</div>',
-        '<script>$("#mySidenav").BootSideMenu({pushBody:false, width:"25%"});</script>',
+        '<script>$("#mySidenav").BootSideMenu({pushBody:false, width:"25%", autoClose:true});</script>',
             '<div class="col-xs-12 col-md-10">',
               chapter_body,
             '</div>',

@@ -223,20 +223,15 @@ div.toc-section {
 }
 
 .toc-section-slide {
-    max-height: 85%;
     border: 1px solid #ccc;
-    /*margin-top: 30px;*/
     border-radius: 0
-}
-
-.menu-wrapper {    
-    height: -webkit-fill-available;
 }
 
 #mySidenav {
     margin-top: 30px;
     top: inherit;
     bottom: inherit;
+    border: 0;
 }
 
 @media (min-width: 992px) and (max-width: 1200px) {
@@ -251,7 +246,17 @@ div.toc-section {
   }
 }
 
+.bootsidemenu > .menu-wrapper {
+  height: fit-content;
+}
 
+.bootsidemenu-left > .toggler {
+  height: 42px;
+}
+
+.bootsidemenu-left > .toggler > span {
+    margin: 10px 2px;
+}
 
 .section-link {
     width: auto;
