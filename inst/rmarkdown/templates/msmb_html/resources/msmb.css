@@ -228,10 +228,10 @@ div.toc-section {
 }
 
 #mySidenav {
-    margin-top: 30px;
-    top: inherit;
-    bottom: inherit;
+    margin-top: 70px;
     border: 0;
+    box-shadow: none;
+    background: none;
 }
 
 @media (min-width: 992px) and (max-width: 1200px) {
@@ -252,6 +252,7 @@ div.toc-section {
 
 .bootsidemenu-left > .toggler {
   height: 42px;
+  top: 0;
 }
 
 .bootsidemenu-left > .toggler > span {

@@ -4,7 +4,7 @@
 
 This branch is for exploring using Bootstrap to provide the layout, so I can more easily resise navigation and margins as the size of the screen changes.  
 
-A rough example of the current status (2018-10-02) can be found at http://www-huber.embl.de/users/msmith/msmbstyle/bootstrap/
+A rough example of the current status (2018-10-02) can be found at http://www.huber.embl.de/users/msmith/msmbstyle/bootstrap/
 
 # Acknowledgments
 
