@@ -23,7 +23,7 @@ A (probably incomplete) list of the layout differences between an HTML book prod
 
 The grid-layout branch uses Bootstrap to provide an alternative approach to arranging the content into columns.  An example can be seen at https://www.huber.embl.de/users/msmith/msmbstyle/bootstrap/
 
-#Ackowledgments
+# Acknowledgments
 
 ## Funding 
 
