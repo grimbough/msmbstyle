@@ -240,7 +240,17 @@ div.sourceCode {
 }
 
 pre.sourceCode {
-  width: auto;
+    width: auto;
+    padding: 2px;
+    padding-left: 10px;
+    background-color: #F7F7F7;
+}
+
+pre {
+    width: auto;
+    padding: 2px;
+    padding-left: 10px;
+    background-color: #F7F7F7;
 }
 
 .build-date {
