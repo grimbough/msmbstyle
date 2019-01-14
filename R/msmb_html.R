@@ -121,8 +121,10 @@ msmb_html = function(
     x = .catch_sourceCode(x) %>%
         .catch_questions() %>%
         .apply_rows2() %>%
-        .clean_columns()
-
+        .clean_columns() %>%
+        stringr::str_remove("<h1>") %>%
+        stringr::str_replace("(<span class=\"header-section-number\">[A-Z0-9]+</span>.+</h1>)", 
+                             "<h1>\\1\n")
 
     xfun::write_utf8(x, output)
     output
