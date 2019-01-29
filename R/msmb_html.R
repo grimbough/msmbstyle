@@ -29,8 +29,6 @@ msmb_html = function(
   margin_references = TRUE
 ) {
 
-  #tufte_variant = match.arg(tufte_variant)
-  ##if (missing(tufte_features) && tufte_variant != 'default') 
   tufte_variant = "envisioned"
   tufte_features = character()
   
@@ -63,6 +61,9 @@ msmb_html = function(
     knitr::opts_hooks$restore(ohooks)
 
     x = xfun::read_utf8(output)
+    
+    x = resolve_refs_html(x)
+    
     fn_label = paste0(knitr::opts_knit$get('rmarkdown.pandoc.id_prefix'), 'fn')
     footnotes = tufte:::parse_footnotes(x, fn_label)
     notes = footnotes$items
@@ -266,8 +267,7 @@ msmb_html_dependency = function() {
         '<div class="dropdown-content">')
     x[toc_start:toc_end] <- x[toc_start:toc_end] %>%
         str_replace_all('<li>', '') %>% 
-        str_replace_all('</li>', '') #%>%
-        #str_replace_all('href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 'href="\\1')
+        str_replace_all('</li>', '')
     x[toc_end] <- '</div>\n</li>'
 
     ## close the navbar list
@@ -298,7 +298,7 @@ msmb_build_chapter = function(
              str_replace('href', 'id="active-page" href') %>%
              str_c(.create_section_links(chapter, include_nums = FALSE))
     
-    chapter <- .number_questions(chapter)
+    #chapter <- .number_questions(chapter)
     chapter <- .nonumber_chap_figs(chapter)
     
     paste(c(
@@ -342,13 +342,14 @@ msmb_build_chapter = function(
         MoreArgs = list(chapter = chapter, chap_num = chap_num))
     
     question_labs <- str_match(chapter[question_divs], "id=\"(ques:[[:alnum:]-]+)\"")[,2]
+
     for(i in seq_along(question_labs)) {
         ref_lines <- stringr::str_which(chapter, paste0("<a href=\".*#", question_labs[i], "\">"))
         chapter[ref_lines] <- str_replace(chapter[ref_lines], 
                                           "\\?\\?",
                                           paste0(chap_num, "\\.", i))
     }
-    
+
     return(chapter)
 }
 

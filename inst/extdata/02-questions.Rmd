@@ -52,7 +52,7 @@ In order to include text formated to look like R code in you can use the sequenc
 
 ### More complex questions
 
-If you need to provide more detail than a single paragraph in a question, you can use the functions `question_begin()` and `question_end()` to demark the content of the document you wish to be included in the question.  `r tufte::margin_note("This is similar to using \x60\\begin{}\x60 and \x60\\end{}\x60 tags in a Latex document.")`.
+If you need to provide more detail than a single paragraph in a question, you can use the functions `question_begin()` and `question_end()` to demark the content of the document you wish to be included in the question.  `r tufte::margin_note("This is similar to using \x60\\begin{}\x60 and \x60\\end{}\x60 tags in a Latex document.")`.\@ref(ques:fail)
 
 They can again be called either inline or in code chunks (inline seems simpler) within the R Markdown document, and it is imperative they be used as a pair, otherwise the resulting document will have missmatched HTML tags `r tufte::margin_note("currently there's no sanity checking for this, it's up to the author!")`.
 
