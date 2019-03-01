@@ -143,6 +143,28 @@ li .marginnote,.sidenote {
     margin-right: -84.4%;
 }
 
+blockquote {
+  width: 45%;
+  -webkit-padding-start: 5%;
+  -webkit-padding-end: 5%;
+  -moz-padding-start: 5%;
+  -moz-padding-end: 5%;
+  display: block;
+  margin-block-end: 0;
+  margin-block-start: 0;
+  margin-inline-start: 0;
+  scroll-margin-inline-end: 0;
+}
+
+blockquote p {
+  width: 100%
+}
+
+blockquote .marginnote, blockquote .sidenote {
+    width: 61%;
+    margin-right: -84.4%;
+}
+
 .msmb {
     display: inline-block;
     color: white;
