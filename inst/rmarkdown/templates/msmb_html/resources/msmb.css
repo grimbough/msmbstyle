@@ -138,7 +138,7 @@ li.dropdown {
 }
 
 
-li .marginnote,.sidenote {
+li .marginnote,li .sidenote {
     width: 61%;
     margin-right: -84.4%;
 }
