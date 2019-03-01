@@ -56,12 +56,6 @@ its only here while we sort out the book*/
     cursor: pointer;
 }
 
-/*
-.marginnote, .sidenote {
-  margin-left: -100%;
-}
-*/
-
 .margintab {
   margin: 0;
   width: 30%;
@@ -141,6 +135,12 @@ li.dropdown {
     display: inline-block;
     color: white;
     padding: 0;
+}
+
+
+li .marginnote,.sidenote {
+    width: 61%;
+    margin-right: -84.4%;
 }
 
 .msmb {
