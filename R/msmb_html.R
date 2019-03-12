@@ -23,6 +23,7 @@ msmb_html_book = function(...) {
 #' @param margin_references \code{logical}.  Determines whether to place 
 #'   citations in the margin, or collate them at the end of the document.
 #' @rdname msmb_html
+#' @importFrom bookdown resolve_refs_html
 #' @export
 msmb_html = function(
   ..., 
@@ -62,7 +63,7 @@ msmb_html = function(
 
     x = xfun::read_utf8(output)
     
-    x = resolve_refs_html(x)
+    x = bookdown::resolve_refs_html(x)
     
     fn_label = paste0(knitr::opts_knit$get('rmarkdown.pandoc.id_prefix'), 'fn')
     footnotes = tufte:::parse_footnotes(x, fn_label)
