@@ -286,6 +286,9 @@ pre {
 .build-date {
   font-size: 0.8em;
   float: left;
+  line-height: 1em;
+  margin-bottom: 2em;
+  margin-top: 0;
 }
 
 @media (max-width: 760px) {

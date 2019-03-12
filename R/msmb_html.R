@@ -300,6 +300,7 @@ msmb_build_chapter = function(
     
     #chapter <- .number_questions(chapter)
     chapter <- .nonumber_chap_figs(chapter)
+    chapter <- .retag_margin_figures(chapter)
     
     paste(c(
         head,
@@ -394,4 +395,20 @@ msmb_build_chapter = function(
     chapter3 <- stringr::str_replace_all(chapter2, global_replacement)
     stringr::str_split(chapter3, "\n")[[1]]
 
+}
+
+## the ID attribute/anchor for margin figures ends up inside a comment block
+## Here we look for these, and move the id into a 'name' attribute
+## for the appropriate <img> tag
+.retag_margin_figures <- function(chapter) {
+    idx <- stringr::str_which(chapter, "<img.*<!--<span id")
+    
+    if(length(idx)) {
+    #for(i in seq_along(idx)) {
+        id <- str_match(chapter[idx], pattern = "<!--<span (id=\"fig:[[:alnum:]-]+\")")[,2]
+        chapter[idx] <- str_replace(chapter[idx], pattern = "<img ", paste0("<img ", id, " ")) %>%
+            stringr::str_replace_all("<!--<span id=\"fig:.*</span>", "<!--")
+    }
+    
+    return(chapter)
 }
