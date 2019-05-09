@@ -63,7 +63,7 @@ msmb_html = function(
 
     x = xfun::read_utf8(output)
     
-    x = bookdown::resolve_refs_html(x)
+    x = resolve_refs_html(x)
     
     fn_label = paste0(knitr::opts_knit$get('rmarkdown.pandoc.id_prefix'), 'fn')
     footnotes = tufte:::parse_footnotes(x, fn_label)
@@ -405,7 +405,6 @@ msmb_build_chapter = function(
     idx <- stringr::str_which(chapter, "<img.*<!--<span id")
     
     if(length(idx)) {
-    #for(i in seq_along(idx)) {
         id <- str_match(chapter[idx], pattern = "<!--<span (id=\"fig:[[:alnum:]-]+\")")[,2]
         chapter[idx] <- str_replace(chapter[idx], pattern = "<img ", paste0("<img ", id, " ")) %>%
             stringr::str_replace_all("<!--<span id=\"fig:.*</span>", "<!--")
