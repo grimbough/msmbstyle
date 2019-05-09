@@ -106,7 +106,7 @@ li p {
 
 /* header bar */
 
-ul.navbar {
+ul .navbar {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -157,7 +157,10 @@ blockquote {
 }
 
 blockquote p {
-  width: 100%
+  width: 100%;
+  background-color: #F7F7F7;
+  font-size: 1.3rem;
+  font-style: italic;
 }
 
 blockquote .marginnote, blockquote .sidenote {
