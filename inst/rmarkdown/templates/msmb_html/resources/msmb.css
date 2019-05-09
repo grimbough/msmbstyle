@@ -264,6 +264,9 @@ div.sourceCode {
     width: 56%;
 }
 
+/* 
+changes to bookdown HTML render this 
+obsolete for now 
 pre.sourceCode {
     width: auto;
     padding: 2px;
@@ -272,6 +275,7 @@ pre.sourceCode {
     margin-bottom: 3px;
     margin-top: 3px;
 }
+*/
 
 pre {
     width: auto;
