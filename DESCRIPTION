@@ -10,7 +10,7 @@ Description: Provides R Markdown output formats to use with Modern Statistics
 License: GPL-3
 LazyData: TRUE
 Depends:
-    bookdown
+    bookdown (>= 0.10)
 Imports:
     tufte,
     htmltools,

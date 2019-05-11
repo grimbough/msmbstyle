@@ -106,7 +106,7 @@ li p {
 
 /* header bar */
 
-ul .navbar {
+ul.navbar {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -275,6 +275,10 @@ pre.sourceCode {
     margin-bottom: 3px;
     margin-top: 3px;
 }
+
+pre {
+  width: 56%;
+}
 */
 
 pre {
@@ -286,9 +290,7 @@ pre {
     margin-top: 3px; 
 }
 
-pre {
-  width: 56%;
-}
+
 
 .build-date {
   font-size: 0.8em;
