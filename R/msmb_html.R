@@ -259,20 +259,30 @@ msmb_html_dependency = function() {
                      '<p><p class="author">', 
                      paste(yaml$author, collapse = ', '), '</p>')
 
-    toc_start <- min(which(str_detect(x, '<ul>')))
-    toc_end <- min(which(str_detect(x, '</ul>')))
-    x[toc_start] <- paste0('<ul class="navbar">\n',
-        '<li class="msmb">', header, '</li>\n',
-        '<li class="dropdown" style="float:right">\n',
-        '<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>\n',
-        '<div class="dropdown-content">')
+    toc_start <- str_which(x, pattern = "<!--bookdown:toc:start-->")
+    toc_end <- str_which(x, pattern = "<!--bookdown:toc:end-->")
+    
+    #toc_start <- min(which(str_detect(x, '<ul>')))
+    #toc_end <- min(which(str_detect(x, '</ul>')))
+    #x[toc_start] <- paste0('<ul class="navbar">\n',
+    #    '<li class="msmb">', header, '</li>\n',
+    #    '<li class="dropdown" style="float:right">\n',
+    #    '<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>\n',
+    #    '<div class="dropdown-content">')
     x[toc_start:toc_end] <- x[toc_start:toc_end] %>%
+        str_replace('<ul>',
+                    paste0('<ul class="navbar">\n',
+                           '<li class="msmb">', header, '</li>\n',
+                           '<li class="dropdown" style="float:right">\n',
+                           '<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>\n',
+                           '<div class="dropdown-content">')) %>%
         str_replace_all('<li>', '') %>% 
-        str_replace_all('</li>', '')
-    x[toc_end] <- '</div>\n</li>'
+        str_replace_all('</li>', '') %>%
+        str_replace('</ul>', '</div>\n</li>\n</ul>')
+    #x[toc_end] <- '</div>\n</li>'
 
     ## close the navbar list
-    x[toc_end] <- str_c(x[toc_end], '\n</ul>')
+    #x[toc_end] <- str_c(x[toc_end], '\n</ul>')
     
     return(x)
 }
@@ -294,10 +304,13 @@ msmb_build_chapter = function(
                           replacement = 'href="\\1')
     
     # manipulate the TOC for this page to include sections
-    this_page = min(which(str_detect(toc, html_cur)))
-    toc[ this_page ] <- toc[ this_page ] %>%
-             str_replace('href', 'id="active-page" href') %>%
-             str_c(.create_section_links(chapter, include_nums = FALSE))
+    this_page_idx <- str_which(toc, html_cur)
+    if(length(this_page_idx)) {
+        this_page = min(this_page_idx)
+        toc[ this_page ] <- toc[ this_page ] %>%
+                 str_replace('href', 'id="active-page" href') %>%
+                 str_c(.create_section_links(chapter, include_nums = FALSE))
+    }
     
     #chapter <- .number_questions(chapter)
     chapter <- .nonumber_chap_figs(chapter)
