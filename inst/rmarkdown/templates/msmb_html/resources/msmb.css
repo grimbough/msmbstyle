@@ -282,15 +282,15 @@ pre {
 */
 
 pre {
-    width: auto;
-    padding: 2px;
-    padding-left: 10px;
+    width: 53%;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 1%;
+    padding-right: 1%;
     background-color: #F7F7F7;
-    margin-bottom: 10px;
-    margin-top: 3px; 
+    margin-bottom: 4px;
+    margin-top: 4px; 
 }
-
-
 
 .build-date {
   font-size: 0.8em;

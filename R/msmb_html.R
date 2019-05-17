@@ -129,6 +129,9 @@ msmb_html = function(
       z
     })
     
+    # remove hardcoded sourceCode styling
+    x = stringr::str_remove(x, fixed(".sourceCode { overflow: visible; }"))
+    
     x = .toc_2_navbar(x, md_file = input)
 
     xfun::write_utf8(x, output)
@@ -261,14 +264,6 @@ msmb_html_dependency = function() {
 
     toc_start <- str_which(x, pattern = "<!--bookdown:toc:start-->")
     toc_end <- str_which(x, pattern = "<!--bookdown:toc:end-->")
-    
-    #toc_start <- min(which(str_detect(x, '<ul>')))
-    #toc_end <- min(which(str_detect(x, '</ul>')))
-    #x[toc_start] <- paste0('<ul class="navbar">\n',
-    #    '<li class="msmb">', header, '</li>\n',
-    #    '<li class="dropdown" style="float:right">\n',
-    #    '<a href="javascript:void(0)" class="dropbtn">&#x25BE; Chapters</a>\n',
-    #    '<div class="dropdown-content">')
     x[toc_start:toc_end] <- x[toc_start:toc_end] %>%
         str_replace('<ul>',
                     paste0('<ul class="navbar">\n',
@@ -279,10 +274,6 @@ msmb_html_dependency = function() {
         str_replace_all('<li>', '') %>% 
         str_replace_all('</li>', '') %>%
         str_replace('</ul>', '</div>\n</li>\n</ul>')
-    #x[toc_end] <- '</div>\n</li>'
-
-    ## close the navbar list
-    #x[toc_end] <- str_c(x[toc_end], '\n</ul>')
     
     return(x)
 }
