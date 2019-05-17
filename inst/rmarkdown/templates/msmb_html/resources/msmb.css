@@ -290,6 +290,7 @@ pre {
     background-color: #F7F7F7;
     margin-bottom: 4px;
     margin-top: 4px; 
+    overflow-x: scroll;
 }
 
 .build-date {
