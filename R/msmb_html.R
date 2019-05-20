@@ -306,6 +306,7 @@ msmb_build_chapter = function(
     #chapter <- .number_questions(chapter)
     chapter <- .nonumber_chap_figs(chapter)
     chapter <- .retag_margin_figures(chapter)
+    chapter <- .move_margin_table(chapter)
     
     paste(c(
         head,
@@ -416,3 +417,36 @@ msmb_build_chapter = function(
     
     return(chapter)
 }
+
+
+.move_margin_table <- function(chapter) {
+  
+  chapter2 <- paste0(chapter, collapse = "\n")
+  
+  html <- xml2::read_html(chapter2)
+
+  margin_tabs <- xml2::xml_find_all(html, 
+                            xpath = "//table[contains(@class, 'margintab')]")
+  
+  for(i in seq_along(margin_tabs)) {
+    ## paragraph immediately before, should be a caption
+    caption <- xml_find_all(margin_tabs[[i]], xpath = "preceding-sibling::p[1]")[[1]]
+    ## sibling 2 before - this may or may not be a code chunk
+    code <- xml_find_all(margin_tabs[[i]], xpath = "preceding-sibling::*[2]")[[1]]
+    if(grepl('<pre class="sourceCode', as.character(code))) {
+      if(grepl('<caption>', as.character(caption))) {
+        xml_add_sibling(code, caption, .where = "before", .copy = FALSE)
+        #xml_remove(caption)
+      }
+      xml_add_sibling(code, margin_tabs[[i]], .where = "before", .copy = FALSE)
+      #xml_remove(margin_tabs[[i]])
+    } else if (grepl('<caption>', as.character(caption))) {
+      xml_add_sibling(.x = margin_tabs[[i]], .value = caption, .where = "before", .copy = FALSE)
+      #xml_remove(caption)
+    }
+  }
+  
+  chapter <- stringr::str_split(as.character(html), "\n")[[1]]
+  return(chapter)
+}
+
