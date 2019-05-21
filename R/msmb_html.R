@@ -278,6 +278,7 @@ msmb_html_dependency = function() {
     return(x)
 }
 
+
 msmb_build_chapter = function(
     head, toc, chapter, link_prev, link_next, rmd_cur, html_cur, foot
 ) {
@@ -418,7 +419,7 @@ msmb_build_chapter = function(
     return(chapter)
 }
 
-
+#' @importFrom xml2 read_html xml_find_all xml_add_sibling
 .move_margin_table <- function(chapter) {
   
   chapter2 <- paste0(chapter, collapse = "\n")
@@ -436,13 +437,10 @@ msmb_build_chapter = function(
     if(grepl('<pre class="sourceCode', as.character(code))) {
       if(grepl('<caption>', as.character(caption))) {
         xml_add_sibling(code, caption, .where = "before", .copy = FALSE)
-        #xml_remove(caption)
       }
       xml_add_sibling(code, margin_tabs[[i]], .where = "before", .copy = FALSE)
-      #xml_remove(margin_tabs[[i]])
     } else if (grepl('<caption>', as.character(caption))) {
       xml_add_sibling(.x = margin_tabs[[i]], .value = caption, .where = "before", .copy = FALSE)
-      #xml_remove(caption)
     }
   }
   
