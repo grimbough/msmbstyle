@@ -292,7 +292,7 @@ msmb_build_chapter = function(
     toc = gsub('^(<li>)(.+<ul>)$', '<li class="has-sub">\\2', toc)
     
     toc = str_replace_all(toc, 
-                          pattern = 'href="([[:alnum:]:-]+.html)?#[[:alpha:]:-]+', 
+                          pattern = 'href="([[:alnum:]:-]+.html)?#[[:alnum:]:-]+', 
                           replacement = 'href="\\1')
     
     # manipulate the TOC for this page to include sections
