@@ -37,8 +37,9 @@
 #' @seealso \code{\link{question}}
 #' 
 #' @export
-solution <- function(text, header = "&#x25BA; Solution", toggle = TRUE, hidden = FALSE) {
-    
+# solution <- function(text, header = "&#x25BA; Solution", toggle = TRUE, hidden = FALSE) {
+
+solution <- function(text, header = "Solution", toggle = TRUE, hidden = FALSE) {    
     if (knitr::is_html_output()) {
         
         id <- generate_id2()
@@ -71,7 +72,8 @@ solution <- function(text, header = "&#x25BA; Solution", toggle = TRUE, hidden =
         } else {
             part2 <- paste0("<p>", text, "</p>", "</div>",
                 "<span class=\"solution-end\">", 
-                "<span class=\"fa fa-square-o solution-icon\"></span>", "</span>",
+                # "<span class=\"fa fa-square-o solution-icon\"></span>", 
+                "</span>",
                 "</div>")
         }
 
@@ -92,7 +94,11 @@ solution <- function(text, header = "&#x25BA; Solution", toggle = TRUE, hidden =
 
 #' @rdname solution
 #' @export 
-solution_begin <- function(header = "&#x25BA; Solution", toggle = TRUE, hidden = FALSE) {
+# solution_begin <- function(header = "&#x25BA; Solution", toggle = TRUE, hidden = FALSE) {
+#     solution(header = header, toggle = toggle, hidden = hidden)
+# }
+
+solution_begin <- function(header = "Solution", toggle = TRUE, hidden = FALSE) {
     solution(header = header, toggle = toggle, hidden = hidden)
 }
 
@@ -103,7 +109,8 @@ solution_end <- function() {
         
         part2 <- paste0("</div>",
                         "<span class=\"solution-end\">",   
-                        "<span class=\"fa fa-square-o solution-icon\"></span>", "</span>",
+                        # "<span class=\"fa fa-square-o solution-icon\"></span>", 
+                        "</span>",
                         "</div>") 
         output <- structure(part2, format = "HTML", class = "knitr_kable")
     }
@@ -157,7 +164,7 @@ solution_end <- function() {
 #' @seealso \code{\link{solution}}
 #' 
 #' @export
-question <- function(text, header = "&#x25BA; Question", label = NULL) {
+question <- function(text, header = "Question", label = NULL) {
     
     if (knitr::is_html_output()) {
         
@@ -172,7 +179,9 @@ question <- function(text, header = "&#x25BA; Question", label = NULL) {
             part2 <- ""
         } else {
             part2 <- paste0("", text, "", "</div>",
-                "<span class='question-end'>", "<span class='fa fa-square-o solution-icon'></span>", "</span>",
+                "<span class='question-end'>",
+                # "<span class='fa fa-square-o solution-icon'></span>", 
+                "</span>",
                 "</div>")
         }
 
@@ -195,7 +204,11 @@ question <- function(text, header = "&#x25BA; Question", label = NULL) {
 
 #' @rdname question
 #' @export 
-question_begin <- function(header = "&#x25BA; Question", label = NULL) {
+# question_begin <- function(header = "&#x25BA; Question", label = NULL) {
+#     question(header = header, label = label)
+# }
+
+question_begin <- function(header = "Question", label = NULL) {
     question(header = header, label = label)
 }
 
@@ -206,7 +219,8 @@ question_end <- function() {
     if (knitr::is_html_output()) {
         part2 <- paste0("</div>",
                         "<span class=\"question-end\">", 
-                        "<span class=\"fa fa-square-o solution-icon\"></span>", "</span>",
+                        # "<span class=\"fa fa-square-o solution-icon\"></span>", 
+                        "</span>",
                         "</div>") 
         output <- structure(part2, format = "HTML", class = "knitr_kable")
     }
