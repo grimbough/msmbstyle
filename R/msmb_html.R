@@ -124,12 +124,14 @@ msmb_html = function(
         .clean_columns() %>%
         stringr::str_remove("<h1>") %>%
         stringr::str_replace("(<span class=\"header-section-number\">[A-Z0-9]+</span>.+</h1>)", 
-                             "<h1>\\1\n")%>%
+                             "<h1>\\1\n") %>%
         stringr::str_replace("<div class=\"col-sm-9\">.+</h1>", 
                              function(x){
-                                 str_replace(x, "<div class=\"col-sm-9\">", "<div class=\"col-sm-9\"><h1>")
-                             }
-                            )
+                               str_replace(x, "<div class=\"col-sm-9\">", 
+                                           "<div class=\"col-sm-9\"><h1>")}
+                             ) %>%
+        stringr::str_replace("<br><span class=\"author hidden-xs\">",
+                           "<span class=\"author hidden-xs\">")
 
     xfun::write_utf8(x, output)
     output
