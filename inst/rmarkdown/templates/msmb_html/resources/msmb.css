@@ -264,11 +264,10 @@ div.sourceCode {
     width: 56%;
 }
 
-/* 
-changes to bookdown HTML render this 
-obsolete for now 
 pre.sourceCode {
     width: auto;
+}
+/* 
     padding: 2px;
     padding-left: 10px;
     background-color: #F7F7F7;

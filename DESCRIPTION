@@ -1,7 +1,7 @@
 Package: msmbstyle
 Type: Package
 Title: MSMB Styles for R Markdown Documents
-Version: 0.0.11
+Version: 0.0.12
 Authors@R: c(
     person("Mike", "Smith", role = c("aut", "cre"), email = "grimbough@gmail.com")
     )
@@ -10,7 +10,7 @@ Description: Provides R Markdown output formats to use with Modern Statistics
 License: GPL-3
 LazyData: TRUE
 Depends:
-    bookdown (>= 0.10)
+    bookdown (>= 0.12)
 Imports:
     tufte,
     htmltools,
