@@ -66,7 +66,7 @@ msmb_html = function(
     x = resolve_refs_html(x)
     
     fn_label = paste0(knitr::opts_knit$get('rmarkdown.pandoc.id_prefix'), 'fn')
-    footnotes = tufte:::parse_footnotes(x, fn_label)
+    footnotes = parse_footnotes(x, fn_label)
     notes = footnotes$items
     # replace footnotes with sidenotes
     for (i in seq_along(notes)) {
