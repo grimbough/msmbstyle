@@ -103,6 +103,10 @@ li p {
   margin-bottom: 0;
 }
 
+video {
+  max-width: 55%;
+}
+
 
 /* header bar */
 
