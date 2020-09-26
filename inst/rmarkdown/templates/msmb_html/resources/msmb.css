@@ -104,7 +104,12 @@ li p {
 }
 
 video {
-  max-width: 55%;
+  width: 100%;
+}
+
+.shaka-video-container {
+  width: 55%;
+  max-width: 100%;
 }
 
 
@@ -266,34 +271,23 @@ li.toc a {
 
 div.sourceCode {
     width: 56%;
+    /*padding-left: 1%;*/
 }
 
 pre.sourceCode {
     width: auto;
 }
-/* 
-    padding: 2px;
-    padding-left: 10px;
-    background-color: #F7F7F7;
-    margin-bottom: 3px;
-    margin-top: 3px;
-}
 
 pre {
-  width: 56%;
-}
-*/
-
-pre {
-    width: 53%;
+    width: 56%;
     padding-top: 2px;
     padding-bottom: 2px;
-    padding-left: 1%;
-    padding-right: 1%;
+    /*padding-left: 1%;
+    padding-right: 1%;*/
     background-color: #F7F7F7;
     margin-bottom: 4px;
     margin-top: 4px; 
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 .build-date {
@@ -308,19 +302,21 @@ pre {
     body {
         padding-left: 0;
         margin-left: 2%;
-        margin-right: 2%;
         width: auto;
     }
     p {
         width: auto;
-        font-size: 1.2em;
+        font-size: 1.2rem;
     }
     .marginnote, .sidenote {
         left: 0;
     }
-    .sourceCode {
+    div.sourceCode {
         display: inline-block;
-        width: 90%;
+        width: 100%;
+    }
+    pre {
+      width: 100%;
     }
     .title, .author, .dropdown {
         text-align: center;

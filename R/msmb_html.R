@@ -324,7 +324,7 @@ msmb_build_chapter = function(
         bookdown:::source_link(rmd_cur),
         bookdown:::button_link(link_next, 'Next'),
         '</p>',
-        '<p class="build-date">Page built: ', as.character(Sys.Date()), '</p>',
+        '<p class="build-date">Page built: ', as.character(Sys.Date()), ' using ', R.version.string, '</p>',
         '</div>',
         '</div>',
         foot
