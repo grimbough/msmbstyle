@@ -47,7 +47,7 @@ solution <- function(text, header = "&#x25BA; Solution", toggle = TRUE, hidden =
         id2 <- paste0("sol-body-", id)
         
         part1 <- paste0(
-               "<div class = \"solution\">",
+               "<div class = \"msmb-solution\">",
                "<p class=\"solution-begin\">", header, 
                ifelse(toggle, 
                       sprintf("<span id='%s' class=\"fa fa-plus-square solution-icon clickable\" onclick=\"toggle_visibility('%s', '%s')\"></span>", id1, id2, id1), 
