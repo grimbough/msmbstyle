@@ -1,5 +1,5 @@
 @import 'https://fonts.googleapis.com/css?family=Istok+Web|Oxygen|Source+Sans+Pro';
-@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
+@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css';
 body {
   font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
   background-color: #fefefe;
@@ -88,6 +88,22 @@ h2 {
   padding-bottom: 0.5rem;
   margin-top: 3em;
   font-weight: bold;
+}
+
+.tooltip>.internal-link-btn { 
+  display: none;
+  float: none;
+  vertical-align: middle;
+  padding: 0;
+  margin-left: 10px;
+  border: none;
+}
+h2:hover>.tooltip>.internal-link-btn { display: inline }
+h3:hover>.tooltip>.internal-link-btn { display: inline }
+
+.internal-link>a:link {
+  text-decoration: none;
+  background-size: 0;
 }
 
 h3 {
@@ -297,6 +313,45 @@ pre {
   margin-bottom: 2em;
   margin-top: 0;
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 70px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -35px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
 
 @media (max-width: 760px) {
     body {

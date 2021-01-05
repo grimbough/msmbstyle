@@ -286,7 +286,7 @@ msmb_build_chapter = function(
     ## insert script for solution toggle
     ## we put it after the msmb.css as this should always be present
     last_script <- max(str_which(head, "msmb.css\""))
-    head[last_script] <- paste(head[last_script], toggle_script(), sep = "\n")
+    head[last_script] <- paste(head[last_script], toggle_script(), copy_link_script(), sep = "\n")
     
     # add a has-sub class to the <li> items that has sub lists
     toc = gsub('^(<li>)(.+<ul>)$', '<li class="has-sub">\\2', toc)
@@ -308,6 +308,7 @@ msmb_build_chapter = function(
     chapter <- .nonumber_chap_figs(chapter)
     chapter <- .retag_margin_figures(chapter)
     chapter <- .move_margin_table(chapter)
+    chapter <- .add_internal_links(chapter)
     
     paste(c(
         head,
@@ -442,6 +443,40 @@ msmb_build_chapter = function(
     } else if (grepl('<caption>', as.character(caption))) {
       xml_add_sibling(.x = margin_tabs[[i]], .value = caption, .where = "before", .copy = FALSE)
     }
+  }
+  
+  chapter <- stringr::str_split(as.character(html), "\n")[[1]]
+  return(chapter)
+}
+
+#' @importFrom xml2 read_html xml_find_all xml_add_child
+.add_internal_links <- function(chapter) {
+  chapter2 <- paste0(chapter, collapse = "\n")
+  
+  html <- xml2::read_html(chapter2)
+  
+  sections <- xml2::xml_find_all(html, xpath = "//h2|//h3")
+  
+  for(j in seq_along(sections)) {
+    
+    ## construct the span we'll insert into the HTML to provide the link
+    section_name <- xml2::xml_attr(xml2::xml_parent(sections[[j]]), attr = "id")
+    
+    span <- list("Copy link")
+    attr(span, ".class") <- "tooltiptext"
+    attr(span, "id") <- paste0(section_name, "-tooltip")
+    i <- list()
+    attr(i, ".class") <- "fa fa-link"
+    button <- list(span = span, i = i)
+    attr(button, ".class") <- "internal-link-btn"
+    
+    attr(button, "onclick") <- paste0("copy_link('",  section_name, "')")
+    attr(button, "onmouseout") <- paste0("reset_tooltip('",  section_name, "-tooltip')")
+    
+    div <- list(button = button)
+    attr(div, ".class") <- "tooltip"
+    
+    xml_add_child(.x = sections[[j]], .value = xml2::as_xml_document(list(div = div)), .copy = TRUE)
   }
   
   chapter <- stringr::str_split(as.character(html), "\n")[[1]]
