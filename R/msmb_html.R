@@ -478,14 +478,14 @@ msmb_build_chapter = function(
     xml_add_child(.x = sections[[j]], .value = xml2::as_xml_document(list(div = div)), .copy = TRUE)
   }
   
-  equations <- xml2::xml_find_all(html, xpath = "//span[contains(@class, 'math display')]")
+  equations <- xml2::xml_find_all(html, xpath = "//span[contains(@class, 'math display') and contains(@id,'eq:')]")
   for(j in seq_along(equations)) {
     
     ## construct the span we'll insert into the HTML to provide the link
     equation_id <- xml2::xml_attr(equations[[j]], attr = "id")
     
     xml2::xml_add_parent(.x = xml2::xml_parent(equations[[j]]), 
-                         .value = xml2::as_xml_document("<div class='eqn-mouseover'></div>"))
+                         .value = xml2::as_xml_document(list(div = structure(list(), .class="eqn-mouseover"))))
     
     span <- list("Copy link")
     attr(span, ".class") <- "tooltiptext"
