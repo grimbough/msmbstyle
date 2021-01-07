@@ -449,14 +449,13 @@ msmb_build_chapter = function(
   return(chapter)
 }
 
-#' @importFrom xml2 read_html xml_find_all xml_add_child
+#' @importFrom xml2 read_html xml_find_all xml_add_child xml_add_parent
 .add_internal_links <- function(chapter) {
   chapter2 <- paste0(chapter, collapse = "\n")
   
   html <- xml2::read_html(chapter2)
   
   sections <- xml2::xml_find_all(html, xpath = "//h2|//h3")
-  
   for(j in seq_along(sections)) {
     
     ## construct the span we'll insert into the HTML to provide the link
@@ -477,6 +476,33 @@ msmb_build_chapter = function(
     attr(div, ".class") <- "tooltip"
     
     xml_add_child(.x = sections[[j]], .value = xml2::as_xml_document(list(div = div)), .copy = TRUE)
+  }
+  
+  equations <- xml2::xml_find_all(html, xpath = "//span[contains(@class, 'math display')]")
+  for(j in seq_along(equations)) {
+    
+    ## construct the span we'll insert into the HTML to provide the link
+    equation_id <- xml2::xml_attr(equations[[j]], attr = "id")
+    
+    xml2::xml_add_parent(.x = xml2::xml_parent(equations[[j]]), 
+                         .value = xml2::as_xml_document("<div class='eqn-mouseover'></div>"))
+    
+    span <- list("Copy link")
+    attr(span, ".class") <- "tooltiptext"
+    attr(span, "id") <- paste0(equation_id, "-tooltip")
+    i <- list()
+    attr(i, ".class") <- "fa fa-link"
+    button <- list(span = span, i = i)
+    attr(button, ".class") <- "internal-link-eqn"
+    
+    attr(button, "onclick") <- paste0("copy_link('",  equation_id, "')")
+    attr(button, "onmouseout") <- paste0("reset_tooltip('",  equation_id, "-tooltip')")
+    
+    div <- list(button = button)
+    attr(div, ".class") <- "tooltip-eqn"
+    
+    xml2::xml_add_sibling(.x = equations[[j]], .value = xml2::as_xml_document(list(div = div)),
+                    .where = "before", .copy = TRUE)
   }
   
   chapter <- stringr::str_split(as.character(html), "\n")[[1]]

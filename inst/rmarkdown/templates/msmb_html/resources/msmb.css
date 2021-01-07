@@ -97,6 +97,8 @@ h2 {
   padding: 0;
   margin-left: 10px;
   border: none;
+  background: none;
+  color: #1881c2;
 }
 h2:hover>.tooltip>.internal-link-btn { display: inline }
 h3:hover>.tooltip>.internal-link-btn { display: inline }
@@ -352,6 +354,57 @@ pre {
   opacity: 1;
 }
 
+
+.tooltip-eqn {
+  position: relative;
+  z-index: 100;
+}
+
+.tooltip-eqn .tooltiptext {
+  visibility: hidden;
+  width: 70px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  margin-left: -35px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-eqn .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip-eqn:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip-eqn>.internal-link-eqn { 
+  display: none;
+  float: none;
+  vertical-align: middle;
+  padding: 0;
+  margin-left: 10px;
+  margin-top: 3px;
+  border: none;
+  background: none;
+  color: black;
+  position: absolute;
+}
+.eqn-mouseover:hover>.tooltip>.internal-link-eqn { display: inline }
 
 @media (max-width: 760px) {
     body {
