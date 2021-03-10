@@ -21,9 +21,9 @@ resolve_refs_html = function(content, global = FALSE) {
 ## we are assigning numbers to each question, based on the chapter they
 ## reside in.
 parse_ques_labels <- function(content, global = FALSE) {
-    reg_chap = '^(<h1><span class="header-section-number">)([A-Z0-9]+)(</span>.+</h1>)$'
+    reg_chap = '<h1 number="([0-9]+)">.*'
     lines = grep(reg_chap, content)
-    chaps = gsub(reg_chap, '\\2', content[lines])  # chapter numbers
+    chaps = gsub(reg_chap, '\\1', content[lines])  # chapter numbers
     if (length(chaps) == 0) global = TRUE  # no chapter titles or no numbered chapters
     arry = character()  # an array of the form c(label = number, ...)
     if (global) chaps = '0'  # Chapter 0 (could be an arbitrary number)
