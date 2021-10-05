@@ -411,6 +411,10 @@ pre {
   align-items: center;
 }
 
+.eqn-mouseover > p{
+  width:0;
+}
+
 @media (max-width: 760px) {
     body {
         padding-left: 0;
