@@ -20,11 +20,15 @@ body {
     text-align: center;
 }
 
-.proposition, .question-begin, .question-end, .exercise {
+.proposition, .question-begin, .question-end, span.exercise {
   font-size: 1.4rem;
   font-weight: bold;
   margin-top: 1.2rem;
   color: green;
+}
+
+span.exercise {
+  display: block;
 }
 
 .solution, .solution-begin, .solution-end {

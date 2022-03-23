@@ -374,7 +374,7 @@ msmb_build_chapter = function(
     
     chapter2 <- paste0(chapter, collapse = "\n")
     
-    html <- xml2::read_html(chapter2)
+    html <- xml2::read_html(chapter2) |> xml2::xml_child() |> xml2::xml_child()
     tmp <- xml2::xml_find_all(html, 
                               xpath = "//div[starts-with(@class, 'figure')]|//span[starts-with(@class, 'marginnote')]")
     global_pattern <- global_replacement <- NULL
@@ -425,7 +425,7 @@ msmb_build_chapter = function(
   
   chapter2 <- paste0(chapter, collapse = "\n")
   
-  html <- xml2::read_html(chapter2)
+  html <- xml2::read_html(chapter2) |> xml2::xml_child() |> xml2::xml_child()
 
   margin_tabs <- xml2::xml_find_all(html, 
                             xpath = "//table[contains(@class, 'margintab')]")
@@ -453,7 +453,7 @@ msmb_build_chapter = function(
 .add_internal_links <- function(chapter) {
   chapter2 <- paste0(chapter, collapse = "\n")
   
-  html <- xml2::read_html(chapter2)
+  html <- xml2::read_html(chapter2) |> xml2::xml_child() |> xml2::xml_child()
   
   sections <- xml2::xml_find_all(html, xpath = "//h2|//h3")
   for(j in seq_along(sections)) {
