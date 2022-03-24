@@ -419,6 +419,18 @@ pre {
   width:0;
 }
 
+/* References */
+
+.references {
+  width: 55%;
+}
+
+.csl-entry {
+   margin: 5px;
+}
+
+/* References end */
+
 @media (max-width: 760px) {
     body {
         padding-left: 0;
@@ -461,5 +473,10 @@ pre {
     #TOC {
         max-width: 100%;
     }
+    .references {
+        width: 100%;
+    }
 
 }
+
+
