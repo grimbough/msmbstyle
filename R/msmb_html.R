@@ -67,6 +67,9 @@ msmb_html = function(
     
     fn_label = paste0(knitr::opts_knit$get('rmarkdown.pandoc.id_prefix'), 'fn')
     footnotes = parse_footnotes(x, fn_label)
+    
+    print(footnotes)
+    
     notes = footnotes$items
     # replace footnotes with sidenotes
     for (i in seq_along(notes)) {
