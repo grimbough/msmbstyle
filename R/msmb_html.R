@@ -68,6 +68,7 @@ msmb_html = function(
     fn_label = paste0(knitr::opts_knit$get('rmarkdown.pandoc.id_prefix'), 'fn')
     footnotes = parse_footnotes(x, fn_label)
     
+    cat(x)
     print(footnotes)
     
     notes = footnotes$items
